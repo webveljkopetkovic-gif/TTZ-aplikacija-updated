@@ -12,6 +12,7 @@ Web app (PWA) za health coaching: klijent popuni anketu, kupi plan, tim (Olgica 
 ## Komande (Windows PowerShell)
 - `npm run dev` · `npm run build` · `npm run test` · `npm run lint` · `npx playwright test`
 - `npx supabase start` · `npx supabase db reset` · `npx supabase functions serve`
+- `npm run test:rls` (testovi baze i RLS-a, traže pokrenut Supabase + seed; lokalni nalozi `*@ttz.test`, lozinka `Ttz-dev-2026!`)
 - `npx supabase gen types typescript --local > src/lib/database.types.ts`
 
 ## Pravila domena (NE KRŠI)
