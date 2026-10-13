@@ -21,7 +21,7 @@ export function Sidebar({
   user: { name: string; role: string; tone: 'olgica' | 'ognjen' | 'client' }
 }) {
   return (
-    <aside className="hidden w-[280px] shrink-0 flex-col border-r border-line p-6 lg:flex">
+    <aside className="hidden w-[240px] shrink-0 flex-col border-r border-line p-6 lg:flex">
       <div className="mb-8">
         {/* Privremeni logotip dok ne stigne SVG */}
         <p className="text-4xl font-extrabold italic tracking-tight">TTZ</p>
@@ -34,7 +34,7 @@ export function Sidebar({
             to={item.to}
             className={({ isActive }) =>
               cn(
-                'flex min-h-btn items-center gap-3 rounded-full px-4 text-base font-bold',
+                'flex min-h-btn items-center gap-3 rounded-2xl px-4 text-base font-bold',
                 isActive ? 'bg-brand text-ink' : 'text-ink',
               )
             }

@@ -34,7 +34,7 @@ export function TabBar() {
       <NavLink
         to="/app/tok"
         aria-label="Tok programa"
-        className="-mt-10 mb-1 flex h-[72px] w-[72px] items-center justify-center justify-self-center rounded-full bg-brand text-ink"
+        className="-mt-8 mb-1 flex h-14 w-14 items-center justify-center justify-self-center rounded-full bg-brand text-ink"
       >
         <ClipboardIcon />
       </NavLink>
