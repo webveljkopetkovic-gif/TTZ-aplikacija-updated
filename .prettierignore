@@ -1,0 +1,7 @@
+node_modules
+dist
+design
+supabase
+package-lock.json
+CLAUDE.md
+docs
