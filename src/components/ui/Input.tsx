@@ -64,6 +64,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {(error || hint) && (
         <p
           id={msgId}
+          role={error ? 'alert' : undefined}
           className={cn('mt-2 text-sm', error ? 'font-semibold text-danger' : 'text-muted')}
         >
           {error ?? hint}

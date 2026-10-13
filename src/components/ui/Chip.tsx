@@ -34,7 +34,7 @@ export function ChoiceChip({
       className={cn(
         base,
         'min-h-btn border px-4',
-        selected ? 'border-ink bg-ink text-white' : 'border-line bg-card text-ink',
+        selected ? 'border-brand bg-brand text-ink' : 'border-line bg-card text-ink',
         className,
       )}
       {...props}

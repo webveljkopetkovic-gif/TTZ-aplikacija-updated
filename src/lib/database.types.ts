@@ -23,6 +23,25 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: NonNullable<Json>
+        }
+        ComputedFields: never
+        Insert: {
+          key: string
+          updated_at?: string
+          value: NonNullable<Json>
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: NonNullable<Json>
+        }
+        Relationships: []
+      }
       feedback_replies: {
         Row: {
           author_id: string
@@ -930,6 +949,25 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          count: number
+          key: string
+          window_start: string
+        }
+        ComputedFields: never
+        Insert: {
+          count?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       reminder_settings: {
         Row: {
           client_id: string
@@ -1224,6 +1262,10 @@ export type Database = {
       }
     }
     Functions: {
+      check_rate_limit: {
+        Args: { p_key: string; p_max: number; p_window_seconds: number }
+        Returns: boolean
+      }
       get_partner_revenue: {
         Args: Record<PropertyKey, never>
         Returns: {

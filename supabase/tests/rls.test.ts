@@ -273,3 +273,40 @@ describe('uloge', () => {
     expect(data).toEqual([{ client_id: IDS.ana }])
   })
 })
+
+describe('rate_limits i app_settings', () => {
+  it('rate_limits ne čita niko osim service role funkcije', async () => {
+    for (const client of [anonClient(), ana, olgica]) {
+      const { data } = await client.from('rate_limits').select('*')
+      expect(data ?? []).toEqual([])
+    }
+    const rpc = await ana.rpc('check_rate_limit', { p_key: 'x', p_max: 1, p_window_seconds: 60 })
+    expect(rpc.error).not.toBeNull() // izvršava je samo service role
+  })
+
+  it('podešavanja za uplatu vide prijavljeni, ali ne anon', async () => {
+    const anon = await anonClient().from('app_settings').select('key')
+    expect(anon.data ?? []).toEqual([])
+    const own = await ana.from('app_settings').select('key').eq('key', 'manual_payment')
+    expect(own.data).toEqual([{ key: 'manual_payment' }])
+  })
+
+  it('podešavanja menja samo admin', async () => {
+    const asClient = await ana
+      .from('app_settings')
+      .update({ value: { recipient: 'hakeri', account: '1' } })
+      .eq('key', 'manual_payment')
+      .select()
+    expect(asClient.data ?? []).toEqual([])
+
+    const asTeam = await olgica
+      .from('app_settings')
+      .update({ value: { recipient: 'tim', account: '1' } })
+      .eq('key', 'manual_payment')
+      .select()
+    expect(asTeam.data ?? []).toEqual([])
+
+    const { data } = await ana.from('app_settings').select('value').eq('key', 'manual_payment').single()
+    expect((data?.value as { recipient: string }).recipient).toBe('[primalac uplate]')
+  })
+})

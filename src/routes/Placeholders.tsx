@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useProfile, useSession, useSignOut } from '@/api/auth'
 import { Button } from '@/components/ui'
 
@@ -13,13 +14,17 @@ function Placeholder({ title }: { title: string }) {
       <p className="mt-2 text-muted">
         {profile.data?.full_name ?? profile.data?.email} · uloga: {profile.data?.role}
       </p>
-      <Button className="mt-6" variant="soft" onClick={() => signOut.mutate()}>
+      {profile.data?.role === 'admin' && (
+        <Link to="/tim/uplate" className="mt-6 inline-block font-bold text-brand-text underline">
+          Uplate na čekanju
+        </Link>
+      )}
+      <Button className="mt-6 block" variant="soft" onClick={() => signOut.mutate()}>
         Odjavi se
       </Button>
     </main>
   )
 }
 
-export const ClientHome = () => <Placeholder title="Aplikacija klijenta" />
 export const TeamHome = () => <Placeholder title="Konzola tima" />
 export const PartnerHome = () => <Placeholder title="Partner panel" />

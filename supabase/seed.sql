@@ -65,6 +65,10 @@ begin
     update profiles set role = r.role, full_name = r.full_name, phone = '+38164' || right(r.id::text, 6) where id = r.id;
   end loop;
 
+  -- ===================== PODEŠAVANJA (podaci za ručnu uplatu su placeholder) =====================
+  insert into app_settings (key, value) values
+    ('manual_payment', '{"recipient": "[primalac uplate]", "account": "[broj računa]"}');
+
   -- ===================== PROIZVODI (cene su privremene) =====================
   insert into products (id, kind, name, price_rsd, duration_days) values
     (prod_nutri, 'nutrition',          'Ishrana + suplementi',          7900,  30),

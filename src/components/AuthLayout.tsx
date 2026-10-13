@@ -6,17 +6,19 @@ export function AuthLayout({
   title,
   accent,
   subtitle,
+  backTo = '/prijava',
   children,
 }: {
   title: string
   accent: string
   subtitle?: string
+  backTo?: string
   children: ReactNode
 }) {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-6 pb-10 pt-6">
       <Link
-        to="/prijava"
+        to={backTo}
         aria-label="Nazad"
         className="flex h-11 w-11 items-center justify-center rounded-full bg-card"
       >

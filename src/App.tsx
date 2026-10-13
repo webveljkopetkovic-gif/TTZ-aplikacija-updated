@@ -3,9 +3,15 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { useAuthListener } from '@/api/auth'
 import { RequireRole } from '@/components/RequireRole'
+import Anketa from '@/routes/anketa/Anketa'
 import ForgotPassword from '@/routes/ForgotPassword'
+import { Privacy, Terms } from '@/routes/Legal'
 import Login from '@/routes/Login'
-import { ClientHome, PartnerHome, TeamHome } from '@/routes/Placeholders'
+import ClientRoutes from '@/routes/client/ClientRoutes'
+import Landing from '@/routes/Landing'
+import PlanChoice from '@/routes/PlanChoice'
+import { PartnerHome, TeamHome } from '@/routes/Placeholders'
+import TeamPayments from '@/routes/tim/TeamPayments'
 import ResetPassword from '@/routes/ResetPassword'
 
 const DevUi = lazy(() => import('@/routes/DevUi'))
@@ -16,7 +22,12 @@ function AppRoutes() {
   return (
     <Suspense fallback={null}>
       <Routes>
-        <Route path="/" element={<Navigate to="/prijava" replace />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/plan" element={<PlanChoice />} />
+        <Route path="/anketa" element={<Navigate to="/anketa/1" replace />} />
+        <Route path="/anketa/:step" element={<Anketa />} />
+        <Route path="/privatnost" element={<Privacy />} />
+        <Route path="/uslovi" element={<Terms />} />
         <Route path="/prijava" element={<Login />} />
         <Route path="/zaboravljena-lozinka" element={<ForgotPassword />} />
         <Route path="/nova-lozinka" element={<ResetPassword />} />
@@ -24,7 +35,15 @@ function AppRoutes() {
           path="/app/*"
           element={
             <RequireRole allow={['client']}>
-              <ClientHome />
+              <ClientRoutes />
+            </RequireRole>
+          }
+        />
+        <Route
+          path="/tim/uplate"
+          element={
+            <RequireRole allow={['admin']}>
+              <TeamPayments />
             </RequireRole>
           }
         />
