@@ -4,6 +4,7 @@
  * Retry 3 puta sa pauzom, pa fallback na email ako WhatsApp ne uspe. Tim ne zove klijente: samo poruke.
  */
 import type { SupabaseClient } from '@supabase/supabase-js'
+import webpush from 'web-push'
 
 export type Kind =
   | 'plan_ready'
@@ -136,6 +137,37 @@ async function sendWhatsApp(phone: string, template: string, params: string[]) {
   if (!res.ok) throw new Error(`WhatsApp ${res.status}: ${(await res.text()).slice(0, 300)}`)
 }
 
+/** Web push na sve uređaje klijenta. Vraća broj uređaja koji su primili poruku; mrtve pretplate (404/410) se brišu. */
+async function sendPush(admin: SupabaseClient, clientId: string, built: Built): Promise<number> {
+  const publicKey = env('VAPID_PUBLIC_KEY')
+  const privateKey = env('VAPID_PRIVATE_KEY')
+  if (!publicKey || !privateKey) throw new PermanentError('Push nije podešen (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)')
+  const { data: subs } = await admin
+    .from('push_subscriptions')
+    .select('id, endpoint, p256dh, auth')
+    .eq('user_id', clientId)
+  if (!subs || subs.length === 0) return 0
+  webpush.setVapidDetails(env('VAPID_SUBJECT') || `mailto:${env('EMAIL_FROM')}`, publicKey, privateKey)
+  const url = built.text.match(/https?:\/\/\S+$/)?.[0] ?? ''
+  const payload = JSON.stringify({
+    title: built.subject,
+    body: built.text.replace(/\s*https?:\/\/\S+$/, ''),
+    url,
+  })
+  let delivered = 0
+  for (const sub of subs) {
+    try {
+      await webpush.sendNotification({ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } }, payload)
+      delivered++
+    } catch (e) {
+      const status = (e as { statusCode?: number }).statusCode
+      if (status === 404 || status === 410) await admin.from('push_subscriptions').delete().eq('id', sub.id)
+      else throw e
+    }
+  }
+  return delivered
+}
+
 async function sendEmail(to: string, subject: string, text: string) {
   const key = env('RESEND_API_KEY')
   const from = env('EMAIL_FROM')
@@ -176,12 +208,23 @@ export async function enqueue(admin: SupabaseClient, n: NewNotification) {
   if (error) throw error
 }
 
-/** Kanali koje je klijent izabrao na Dan 1 (profiles.preferred_channels): WhatsApp i/ili email, bez izbora ide email. */
+/**
+ * Kanali koje je klijent izabrao na Dan 1 (profiles.preferred_channels): WhatsApp, email i/ili aplikacija (push, samo
+ * ako ima bar jedan uređaj). Bez WhatsApp-a i emaila uvek ide email, pa poruka ne zavisi od pusha.
+ */
 export async function clientChannels(admin: SupabaseClient, clientId: string): Promise<Channel[]> {
   const { data } = await admin.from('profiles').select('preferred_channels').eq('id', clientId).maybeSingle()
   const raw = (data?.preferred_channels ?? []) as string[]
   const channels = raw.filter((c) => c === 'whatsapp' || c === 'email') as Channel[]
-  return channels.length > 0 ? channels : ['email']
+  if (channels.length === 0) channels.push('email')
+  if (raw.includes('app')) {
+    const { count } = await admin
+      .from('push_subscriptions')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', clientId)
+    if ((count ?? 0) > 0) channels.push('app')
+  }
+  return channels
 }
 
 /** Šalje poruke iz reda čiji je `scheduled_for` prošao. Vraća brojače za log i test. */
@@ -233,7 +276,10 @@ export async function dispatchQueued(
       if (!built) throw new PermanentError(`Nepoznata vrsta poruke: ${row.kind}`)
 
       if (row.channel === 'app') {
-        // poruka u aplikaciji se vidi na ekranu, nema spoljašnjeg slanja
+        if (dryRun) console.log(`[dry-run] push → ${row.client_id}: ${built.text}`)
+        else if ((await sendPush(admin, row.client_id, built)) === 0) {
+          throw new PermanentError('Nema uređaja za push (poruka je poslata ostalim kanalima)')
+        }
       } else if (row.channel === 'whatsapp') {
         if (!profile.phone) throw new PermanentError('Klijent nema broj telefona')
         if (dryRun) console.log(`[dry-run] whatsapp → ${row.client_id}: ${built.text}`)

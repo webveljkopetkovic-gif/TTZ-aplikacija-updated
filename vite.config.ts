@@ -9,7 +9,11 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon.svg'],
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
+      injectManifest: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'] },
+      includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'TTZ – Tvoj tim zdravlja',
         short_name: 'TTZ',
@@ -17,7 +21,9 @@ export default defineConfig({
         theme_color: '#ABF92C',
         background_color: '#FFFFFF',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/app',
+        scope: '/',
+        description: 'Plan ishrane i vežbi, feedback i podrška tima – na jednom mestu.',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },

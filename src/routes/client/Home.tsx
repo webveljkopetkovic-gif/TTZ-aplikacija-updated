@@ -10,6 +10,7 @@ import {
 } from '@/api/client'
 import { useMyFeedbacks } from '@/api/feedback'
 import { CheckCircle, ErrorNote, Loading, Panel, Pill, Screen } from '@/components/client/ui'
+import { AppSetup } from '@/components/client/AppSetup'
 import { Avatar } from '@/components/ui'
 import { useMyProgram } from '@/hooks/useMyProgram'
 import { cn } from '@/lib/cn'
@@ -238,6 +239,7 @@ export default function Home() {
           </span>
           <span aria-hidden="true">›</span>
         </Link>
+        <AppSetup />
       </div>
     </Screen>
   )

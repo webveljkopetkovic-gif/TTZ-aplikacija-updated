@@ -15,7 +15,7 @@ Sve poruke klijentima idu kroz tabelu `notifications` (nikad direktno) sa `dedup
 
 `scheduler` posle dana `trajanje` prebacuje program u `ended`. Pravila su u `supabase/functions/_shared/feedbackRules.ts` (čista funkcija, testirana lažnim vremenom u `src/lib/feedbackRules.test.ts` i `supabase/tests/feedback.test.ts`).
 
-Kanali: `profiles.preferred_channels` (izbor na Dan 1), samo WhatsApp i email; bez izbora ide email. Push (kanal „Aplikacija“) stiže sa PWA u Fazi 9.
+Kanali: `profiles.preferred_channels` (izbor na Dan 1), samo WhatsApp i email; bez izbora ide email. Kanal „Aplikacija“ je web push: klijent ga uključuje na Početnoj („Uključi obaveštenja“), uređaji su u `push_subscriptions`, a šalje se samo ako klijent ima bar jedan uređaj. Traži `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (secrets) i `VITE_VAPID_PUBLIC_KEY` (frontend); par: `npx web-push generate-vapid-keys`. Klik na obaveštenje otvara link iz poruke.
 
 ## Slanje (`_shared/notify.ts`)
 - 3 pokušaja (pauza 5 min × pokušaj), pa status `failed` i greška u `notifications.error`.

@@ -1,7 +1,18 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
+/** U produkciji (APP_URL postavljen) samo naša aplikacija sme da zove funkcije iz pregledača; lokalno je otvoreno. */
+const allowedOrigin = (() => {
+  try {
+    const url = Deno.env.get('APP_URL')
+    return url ? new URL(url).origin : '*'
+  } catch {
+    return '*'
+  }
+})()
+
 export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
+  Vary: 'Origin',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }

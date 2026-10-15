@@ -1,3 +1,4 @@
+import { OfflineBanner } from '@/components/OfflineBanner'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
@@ -66,6 +67,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <OfflineBanner />
         <AppRoutes />
       </BrowserRouter>
     </QueryClientProvider>

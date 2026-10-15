@@ -12,6 +12,7 @@ const state = vi.hoisted(() => ({
   feedbacks: [] as { id: string; due_day: number; status: string }[],
 }))
 
+vi.mock('@/components/client/AppSetup', () => ({ AppSetup: () => null }))
 vi.mock('@/hooks/useMyProgram', () => ({ useMyProgram: () => state.my }))
 vi.mock('@/api/client', () => {
   const ok = (data: unknown) => ({ data, isPending: false, isError: false, isSuccess: true })
