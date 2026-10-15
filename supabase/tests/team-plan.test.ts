@@ -142,7 +142,7 @@ describe('publish-plan', () => {
         `select channel, kind, status from notifications where client_id = $1 and kind = 'plan_ready' order by channel`,
         [IDS.jelena],
       )
-      expect(rows.map((r) => r.channel)).toEqual(['email', 'whatsapp'])
+      expect(rows.map((r) => r.channel).sort()).toEqual(['email', 'whatsapp'])
       expect(rows.every((r) => r.status === 'queued')).toBe(true)
     })
   })

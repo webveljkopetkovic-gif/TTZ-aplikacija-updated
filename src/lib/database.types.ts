@@ -866,13 +866,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'programs_meal_template_id_fkey'
-            columns: ['meal_template_id']
-            isOneToOne: false
-            referencedRelation: 'meal_templates'
-            referencedColumns: ['id']
-          },
-          {
             foreignKeyName: 'programs_client_id_fkey'
             columns: ['client_id']
             isOneToOne: false
@@ -891,6 +884,13 @@ export type Database = {
             columns: ['intake_id']
             isOneToOne: false
             referencedRelation: 'intake_surveys'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'programs_meal_template_id_fkey'
+            columns: ['meal_template_id']
+            isOneToOne: false
+            referencedRelation: 'meal_templates'
             referencedColumns: ['id']
           },
           {
@@ -1262,8 +1262,8 @@ export type Database = {
           pending_review_count: number | null
           plan_focus: string | null
           plan_name: string | null
-          program_day: number | null
           product_kind: Database['public']['Enums']['plan_kind'] | null
+          program_day: number | null
           program_id: string | null
           program_status: Database['public']['Enums']['program_status'] | null
           team_status: string | null

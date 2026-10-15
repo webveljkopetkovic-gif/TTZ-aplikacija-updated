@@ -32,6 +32,7 @@ async function login(page: Page, who: string) {
   await page.getByLabel('Email').fill(`${who}@ttz.test`)
   await page.getByLabel('Lozinka', { exact: true }).fill(PASSWORD)
   await page.getByRole('button', { name: 'Prijavi se' }).click()
+  await expect(page).not.toHaveURL(/\/prijava/)
 }
 
 test.beforeAll(resetJelena)
@@ -63,8 +64,8 @@ test('Olgica pravi i šalje plan, klijentkinja ga dobija', async ({ page, browse
   await expect(page.getByRole('button', { name: 'Dan 14' })).toBeVisible()
 
   // izmena obroka: grami se odbijaju, običan tekst prolazi
-  const lunch = page.getByRole('listitem').filter({ hasText: 'Ručak' }).first()
-  const lunchTitle = lunch.getByRole('textbox').first()
+  const lunch = page.getByRole('listitem').filter({ has: page.getByLabel('Vreme: Ručak') }).first()
+  const lunchTitle = lunch.getByLabel('Obrok: Ručak')
   await lunchTitle.fill('Ćuretina 150 g')
   await lunch.getByRole('button', { name: 'Sačuvaj' }).click()
   await expect(lunch.getByRole('alert')).toContainText('Bez grama')

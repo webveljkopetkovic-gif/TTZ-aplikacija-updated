@@ -31,12 +31,14 @@ function SlotEditor({
   slot,
   item,
   words,
+  saved,
   onSave,
 }: {
   day: number
   slot: (typeof SLOTS)[number]
   item: MealItem | undefined
   words: readonly string[]
+  saved: boolean
   onSave: (meal: MealDraft) => Promise<void>
 }) {
   const [title, setTitle] = useState(item?.title ?? '')
@@ -45,7 +47,6 @@ function SlotEditor({
   const [time, setTime] = useState(hhmm(item?.time_of_day ?? slot.time))
   const [error, setError] = useState<string>()
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
 
   const flagged = matchDisliked({ title, description, recipe }, words)
   const dirty =
@@ -56,7 +57,6 @@ function SlotEditor({
   const fieldId = `meal-${day}-${slot.value}`
 
   const save = async () => {
-    setSaved(false)
     if (title.trim() === '') return setError('Upiši naziv obroka')
     const violation = mealViolation({ title, description, recipe })
     if (violation) return setError(`${violation.message}. Opiši obrok bez brojeva i mera.`)
@@ -71,7 +71,6 @@ function SlotEditor({
         description: description.trim(),
         recipe: recipe.trim(),
       })
-      setSaved(true)
     } catch {
       setError('Obrok nije sačuvan. Pokušaj ponovo.')
     } finally {
@@ -97,6 +96,7 @@ function SlotEditor({
       </div>
       <input
         id={`${fieldId}-title`}
+        aria-label={`Obrok: ${slot.label}`}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Npr. Ćuretina, heljda, salata"
@@ -160,6 +160,13 @@ export function MealEditor({
   onSave: (meal: MealDraft) => Promise<void>
 }) {
   const [day, setDay] = useState(1)
+  // red se remountuje kad se sačuvani naslov promeni (key), pa se potvrda čuva ovde
+  const [savedKey, setSavedKey] = useState<string>()
+  const saveMeal = async (meal: MealDraft) => {
+    setSavedKey(undefined)
+    await onSave(meal)
+    setSavedKey(`${meal.plan_day}-${meal.slot}`)
+  }
   const flaggedDays = new Set(items.filter((i) => matchDisliked(i, words)).map((i) => i.plan_day))
   const filled = new Set(items.map((i) => i.plan_day))
 
@@ -202,7 +209,8 @@ export function MealEditor({
               slot={slot}
               item={item}
               words={words}
-              onSave={onSave}
+              saved={savedKey === `${day}-${slot.value}`}
+              onSave={saveMeal}
             />
           )
         })}
