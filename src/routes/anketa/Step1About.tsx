@@ -1,4 +1,4 @@
-import { CountrySelect, Question } from '@/components/form'
+import { BmiCard, CountrySelect, Question } from '@/components/form'
 import { Input, Segmented } from '@/components/ui'
 import { useStepForm } from '@/hooks/useStepForm'
 import { SEX_OPTIONS, todayInBelgrade } from '@/lib/intakeSchema'
@@ -97,6 +97,8 @@ export default function Step1About() {
           {...reg('weight_kg')}
         />
       </div>
+
+      <BmiCard height={values.height_cm} weight={values.weight_kg} />
 
       <CountrySelect
         label="Država u kojoj živite"

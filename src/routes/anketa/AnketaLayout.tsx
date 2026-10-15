@@ -2,6 +2,7 @@ import type { FormEventHandler, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/cn'
+import { ANKETA_STEPS } from '@/lib/intakeSchema'
 
 const SAVE_NOTE = 'Odgovori se čuvaju dok popunjavaš. Možeš da nastaviš kasnije.'
 
@@ -16,7 +17,7 @@ export function AnketaLayout({
   onSubmit,
   children,
 }: {
-  step: 1 | 2 | 3 | 4 | 5
+  step: number
   title: string
   accent: string
   note?: string
@@ -47,16 +48,18 @@ export function AnketaLayout({
             </svg>
           </Link>
           <div className="flex-1">
-            <p className="text-sm font-bold text-muted">Anketa · korak {step} od 5</p>
+            <p className="text-sm font-bold text-muted">
+              Anketa · korak {step} od {ANKETA_STEPS}
+            </p>
             <div
               role="progressbar"
               aria-label="Napredak ankete"
               aria-valuemin={1}
-              aria-valuemax={5}
+              aria-valuemax={ANKETA_STEPS}
               aria-valuenow={step}
               className="mt-2 flex gap-2"
             >
-              {[1, 2, 3, 4, 5].map((n) => (
+              {Array.from({ length: ANKETA_STEPS }, (_, i) => i + 1).map((n) => (
                 <span
                   key={n}
                   className={cn('h-1.5 flex-1 rounded-full', n <= step ? 'bg-chart' : 'bg-line')}

@@ -8,7 +8,7 @@ import {
   step1Schema,
   step2Schema,
   step4Schema,
-  step5Schema,
+  step10Schema,
   toggleWorkExposure,
   todayInBelgrade,
 } from './intakeSchema'
@@ -41,6 +41,26 @@ const valid = {
   low_sun_country: 'no',
   work_exposure: ['sitting_all_day'],
   disliked_foods: ['liver'],
+  goals: ['fat_loss'],
+  place: 'home',
+  doctor_limit: 'no',
+  chest_pain: 'no',
+  injury: 'no',
+  medical_restriction: 'no',
+  train_duration: '3_12m',
+  train_frequency: '1_2',
+  technique: 'some',
+  long_break: 'no',
+  chair_stands: '10_19',
+  pushups_knees: '5_10',
+  pushups_feet: 'cant',
+  plank_knees: '20_44',
+  plank_feet: 'unknown',
+  single_leg: 'difficult',
+  movement_pain: 'no',
+  stairs: 'breathless',
+  cardio_duration: '20_40',
+  recovery: '24_48h',
   channels: ['whatsapp', 'email'],
   consent_health: true,
   consent_terms: true,
@@ -219,7 +239,7 @@ describe('korak 4 · posao i ishrana', () => {
   })
 })
 
-describe('korak 5 · nalazi i saglasnost', () => {
+describe('korak 10 · nalazi i saglasnost', () => {
   const base = { channels: ['email'], consent_health: true, consent_terms: true }
   const file = (i: number, size = 1000) => ({
     path: `intake/x/${i}.pdf`,
@@ -229,19 +249,19 @@ describe('korak 5 · nalazi i saglasnost', () => {
   })
 
   it('traži bar jedan kanal i obe saglasnosti', () => {
-    expect(step5Schema.safeParse({ ...base, channels: [] }).success).toBe(false)
-    expect(step5Schema.safeParse({ ...base, consent_health: false }).success).toBe(false)
-    expect(step5Schema.safeParse({ ...base, consent_terms: false }).success).toBe(false)
-    expect(step5Schema.safeParse(base).success).toBe(true)
+    expect(step10Schema.safeParse({ ...base, channels: [] }).success).toBe(false)
+    expect(step10Schema.safeParse({ ...base, consent_health: false }).success).toBe(false)
+    expect(step10Schema.safeParse({ ...base, consent_terms: false }).success).toBe(false)
+    expect(step10Schema.safeParse(base).success).toBe(true)
   })
 
   it('nalazi nisu obavezni, ali ih je najviše 10 i svaki do 10 MB', () => {
-    expect(step5Schema.safeParse(base).success).toBe(true)
+    expect(step10Schema.safeParse(base).success).toBe(true)
     const ten = Array.from({ length: 10 }, (_, i) => file(i))
-    expect(step5Schema.safeParse({ ...base, lab_files: ten }).success).toBe(true)
-    expect(step5Schema.safeParse({ ...base, lab_files: [...ten, file(10)] }).success).toBe(false)
+    expect(step10Schema.safeParse({ ...base, lab_files: ten }).success).toBe(true)
+    expect(step10Schema.safeParse({ ...base, lab_files: [...ten, file(10)] }).success).toBe(false)
     expect(
-      step5Schema.safeParse({ ...base, lab_files: [file(1, 10 * 1024 * 1024 + 1)] }).success,
+      step10Schema.safeParse({ ...base, lab_files: [file(1, 10 * 1024 * 1024 + 1)] }).success,
     ).toBe(false)
   })
 })
@@ -286,5 +306,28 @@ describe('uslovna polja se brišu kad uslov nestane', () => {
 
   it('„Nemam dijagnoza“ prazni polje dijagnoza', () => {
     expect(normalizeIntake({ no_diagnoses: true, diagnoses: 'Staro' }).diagnoses).toBe('')
+  })
+})
+
+describe('Ognjenova pitanja (koraci 5–9) u celoj anketi', () => {
+  it('traže se svi odgovori', () => {
+    const rest: Record<string, unknown> = { ...valid }
+    delete rest.goals
+    delete rest.place
+    const result = intakeSchema.safeParse(rest) as Result
+    expect(result.success).toBe(false)
+    expect(fieldsOf(result)).toEqual(expect.arrayContaining(['goals', 'place']))
+  })
+
+  it('razlog je obavezan kad lekar ograničava aktivnost, a briše se kad više ne važi', () => {
+    expect(parse({ doctor_limit: 'yes' }).success).toBe(false)
+    expect(parse({ doctor_limit: 'yes', doctor_limit_reason: 'Srce' }).success).toBe(true)
+    const out = intakeSchema.parse({
+      ...valid,
+      doctor_limit_reason: 'Staro',
+      restriction_text: 'Staro',
+    })
+    expect(out).not.toHaveProperty('doctor_limit_reason')
+    expect(out).not.toHaveProperty('restriction_text')
   })
 })

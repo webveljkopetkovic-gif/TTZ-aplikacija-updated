@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useIntakeDraft } from '@/hooks/useIntakeDraft'
 import { stepSchemas, type IntakeDraftValues } from '@/lib/intakeSchema'
 
-export type StepNumber = 1 | 2 | 3 | 4 | 5
+export type StepNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
 
 /** Početne vrednosti polja koja nisu u nacrtu (država, prefiks telefona, prazne liste). */
 const STEP_DEFAULTS: Record<StepNumber, IntakeDraftValues> = {
@@ -13,7 +13,12 @@ const STEP_DEFAULTS: Record<StepNumber, IntakeDraftValues> = {
   2: { symptoms: [], no_diagnoses: false },
   3: {},
   4: { work_exposure: [], disliked_foods: [] },
-  5: { channels: ['whatsapp', 'email'], lab_files: [] },
+  5: { goals: [] },
+  6: {},
+  7: {},
+  8: {},
+  9: {},
+  10: { channels: ['whatsapp', 'email'], lab_files: [] },
 }
 
 /** Fokus na prvo pogrešno polje, po redosledu na ekranu. Polja se prepoznaju po `data-field`. */

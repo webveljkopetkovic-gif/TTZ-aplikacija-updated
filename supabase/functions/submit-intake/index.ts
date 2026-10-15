@@ -1,8 +1,8 @@
 // Prima anketu pre naloga: validira istom šemom kao forma, čuva je i vraća intake_id.
 import { z } from 'zod'
 import { adminClient, enforceRateLimit, HttpError, json, serve } from '../_shared/http.ts'
-import { exerciseLevelFromActivity } from '../_shared/intakeDerived.ts'
 import { INTAKE_SCHEMA_VERSION, intakeSchema } from '../_shared/intakeSchema.ts'
+import { suggestedLevel } from '../_shared/trainingSchema.ts'
 
 const body = z.object({ intake_id: z.guid(), answers: z.unknown() })
 
@@ -64,7 +64,7 @@ serve(async (req, raw) => {
     height_cm: a.height_cm,
     start_weight_kg: a.weight_kg,
     activity_level: a.activity,
-    exercise_level: exerciseLevelFromActivity(a.activity),
+    exercise_level: suggestedLevel(a), // predlog iz Ognjenovih pitanja, Ognjen potvrđuje
     answers,
     schema_version: INTAKE_SCHEMA_VERSION,
     consent_health: a.consent_health,

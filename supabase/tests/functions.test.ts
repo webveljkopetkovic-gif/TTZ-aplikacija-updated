@@ -53,6 +53,26 @@ const answers = (email: string, overrides: Record<string, unknown> = {}) => ({
   low_sun_country: 'no',
   work_exposure: ['stress'],
   disliked_foods: ['fish'],
+  goals: ['fat_loss'],
+  place: 'home',
+  doctor_limit: 'no',
+  chest_pain: 'no',
+  injury: 'no',
+  medical_restriction: 'no',
+  train_duration: '3_12m',
+  train_frequency: '1_2',
+  technique: 'some',
+  long_break: 'no',
+  chair_stands: '10_19',
+  pushups_knees: '5_10',
+  pushups_feet: 'cant',
+  plank_knees: '20_44',
+  plank_feet: 'unknown',
+  single_leg: 'difficult',
+  movement_pain: 'no',
+  stairs: 'breathless',
+  cardio_duration: '20_40',
+  recovery: '24_48h',
   channels: ['whatsapp'],
   consent_health: true,
   consent_terms: true,
@@ -184,7 +204,7 @@ describe('submit-intake', () => {
     expect(result.data?.fields?.birth_date).toBe('Program je za osobe starije od 18 godina')
   })
 
-  it('čuva anketu i nalaze, izvodi nivo vežbi i ne dozvoljava dupli upis', async () => {
+  it('čuva anketu i nalaze, izvodi nivo vežbi iz Ognjenovih odgovora i ne dozvoljava dupli upis', async () => {
     const id = newIntakeId()
     const email = emailFor('anketa')
     const file = await uploadPdf(id)
@@ -203,7 +223,7 @@ describe('submit-intake', () => {
         sex: 'female',
         activity_level: 'moderate',
         exercise_level: 'intermediate',
-        schema_version: 1,
+        schema_version: 2,
         consent_health: true,
       })
       expect(Number(rows[0].height_cm)).toBe(170)

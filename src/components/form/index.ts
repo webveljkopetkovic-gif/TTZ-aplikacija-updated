@@ -1,4 +1,6 @@
+export * from './BmiCard'
 export * from './ChoiceChips'
+export * from './ChoiceQuestion'
 export * from './CountrySelect'
 export * from './FieldError'
 export * from './FileUploadList'

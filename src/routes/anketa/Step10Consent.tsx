@@ -20,14 +20,14 @@ import { AnketaLayout } from './AnketaLayout'
 
 const extensionOf = (name: string) => name.split('.').pop()?.toLowerCase() ?? ''
 
-export default function Step5Consent() {
+export default function Step10Consent() {
   const navigate = useNavigate()
   const submitIntake = useSubmitIntake()
   const [transient, setTransient] = useState<UploadItem[]>([])
   const [formError, setFormError] = useState<string>()
 
   const { clear } = useIntakeDraft()
-  const { form, draft, submit, reg, setValue, errorOf, values } = useStepForm(5, async () => {
+  const { form, draft, submit, reg, setValue, errorOf, values } = useStepForm(10, async () => {
     setFormError(undefined)
     const current = loadDraft()
     const parsed = intakeSchema.safeParse(current.values)
@@ -122,7 +122,7 @@ export default function Step5Consent() {
 
   return (
     <AnketaLayout
-      step={5}
+      step={10}
       title="Nalazi i"
       accent="saglasnost"
       note="Plan podrške ne zamenjuje lekarsku terapiju."

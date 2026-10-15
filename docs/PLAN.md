@@ -201,7 +201,7 @@ Ime ekrana = ime na canvasu. Slike u `design/`.
 | Ruta | Ekran | Napomena |
 |---|---|---|
 | `/` | Landing (mobilni + web) | tim sa malim profilnim slikama, „Bez brojanja kalorija“, CTA anketa |
-| `/anketa/1` … `/anketa/5` | Anketa 1–5 | Olgicina pitanja, sve po `docs/ANKETA.md` |
+| `/anketa/1` … `/anketa/10` | Anketa 1–10 | Olgicina (1–4) i Ognjenova (5–9) pitanja, nalazi i saglasnost (10), sve po `docs/ANKETA.md` |
 | `/plan` | Izbor plana i nalog | izbor proizvoda, lozinka, saglasnost, plaćanje |
 | `/prijava` | Prijava | email + lozinka, „zaboravljena lozinka“ |
 
@@ -314,7 +314,7 @@ nijednu zdravstvenu tabelu, klijent ne vidi team_notes.
 ```
 Napravi javne ekrane po design/: Landing (mobilni i web), Anketa (više koraka, nacrt u localStorage, email i telefon
 obavezni, upload nalaza do 10 MB PDF/JPG/PNG, saglasnost za zdravstvene podatke), Izbor plana i nalog, Prijava.
-Anketu napravi TAČNO po docs/ANKETA.md (5 koraka, Olgicina pitanja, Zod šema u src/lib/intakeSchema.ts,
+Anketu napravi TAČNO po docs/ANKETA.md (10 koraka, Olgicina i Ognjenova pitanja, Zod šema u src/lib/intakeSchema.ts,
 uslovna polja, 18+, nacrt bez fajlova).
 Edge Function submit-intake (service role, rate limit) čuva anketu i nalaze pre naloga.
 Na "Plati i aktiviraj plan": napravi nalog, poveži anketu (client_id), napravi program 'awaiting_payment' i payment.

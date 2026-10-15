@@ -4,8 +4,20 @@
  * Tekstovi pitanja su Olgicini, ne menjaju se bez pitanja.
  */
 import { z } from 'zod'
+import {
+  checkTrainingHealth,
+  normalizeTraining,
+  trainingStep5Fields,
+  trainingStep6Fields,
+  trainingStep7Fields,
+  trainingStep8Fields,
+  trainingStep9Fields,
+} from './trainingSchema.ts'
 
-export const INTAKE_SCHEMA_VERSION = 1
+/** Verzija 2: dodata Ognjenova pitanja (koraci 5–9), saglasnost je korak 10. */
+export const INTAKE_SCHEMA_VERSION = 2
+/** Broj koraka ankete: 1–4 Olgica, 5–9 Ognjen, 10 nalazi i saglasnost. */
+export const ANKETA_STEPS = 10
 export const MAX_LAB_FILES = 10
 export const MAX_LAB_FILE_BYTES = 10 * 1024 * 1024
 export const LAB_FILE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'heic'] as const
@@ -245,7 +257,7 @@ export const labFileSchema = z.object({
 })
 export type LabFileRef = z.infer<typeof labFileSchema>
 
-const step5Fields = {
+const step10Fields = {
   lab_files: z.array(labFileSchema).max(MAX_LAB_FILES, 'Najviše 10 fajlova').optional().default([]),
   channels: z.array(z.enum(valuesOf(CHANNEL_OPTIONS))).min(1, 'Izaberite bar jedan način'),
   consent_health: z.literal(true, { error: 'Saglasnost je obavezna' }),
@@ -301,20 +313,41 @@ export const step1Schema = z.object(step1Fields).superRefine(checkStep1)
 export const step2Schema = z.object(step2Fields).superRefine(checkStep2)
 export const step3Schema = z.object(step3Fields)
 export const step4Schema = z.object(step4Fields).superRefine(checkStep4)
-export const step5Schema = z.object(step5Fields)
+export const step5Schema = z.object(trainingStep5Fields)
+export const step6Schema = z.object(trainingStep6Fields).superRefine(checkTrainingHealth)
+export const step7Schema = z.object(trainingStep7Fields)
+export const step8Schema = z.object(trainingStep8Fields)
+export const step9Schema = z.object(trainingStep9Fields)
+export const step10Schema = z.object(step10Fields)
 
-export const stepSchemas = [step1Schema, step2Schema, step3Schema, step4Schema, step5Schema] as const
+export const stepSchemas = [
+  step1Schema,
+  step2Schema,
+  step3Schema,
+  step4Schema,
+  step5Schema,
+  step6Schema,
+  step7Schema,
+  step8Schema,
+  step9Schema,
+  step10Schema,
+] as const
 
-/** Imena polja po koracima (1–5), za povratak na prvi korak sa greškom. */
+/** Imena polja po koracima (1–10), za povratak na prvi korak sa greškom. */
 export const STEP_FIELDS: readonly (readonly string[])[] = [
   Object.keys(step1Fields),
   Object.keys(step2Fields).filter((k) => k !== 'sex'), // `sex` je iz koraka 1
   Object.keys(step3Fields),
   Object.keys(step4Fields),
-  Object.keys(step5Fields),
+  Object.keys(trainingStep5Fields),
+  Object.keys(trainingStep6Fields),
+  Object.keys(trainingStep7Fields),
+  Object.keys(trainingStep8Fields),
+  Object.keys(trainingStep9Fields),
+  Object.keys(step10Fields),
 ]
 
-/** Broj koraka (1–5) u kom je polje, ili null ako ga nema. */
+/** Broj koraka (1–10) u kom je polje, ili null ako ga nema. */
 export function stepOfField(field: string): number | null {
   const index = STEP_FIELDS.findIndex((fields) => fields.includes(field))
   return index === -1 ? null : index + 1
@@ -327,12 +360,18 @@ export const intakeSchema = z
     ...step2Fields,
     ...step3Fields,
     ...step4Fields,
-    ...step5Fields,
+    ...trainingStep5Fields,
+    ...trainingStep6Fields,
+    ...trainingStep7Fields,
+    ...trainingStep8Fields,
+    ...trainingStep9Fields,
+    ...step10Fields,
   })
   .superRefine((v, ctx) => {
     checkStep1(v, ctx)
     checkStep2({ ...v, sex: v.sex }, ctx)
     checkStep4(v, ctx)
+    checkTrainingHealth(v, ctx)
   })
   .transform((v) => normalizeIntake(v))
 
@@ -358,9 +397,13 @@ export function normalizeIntake<
     pregnancies?: string
     no_diagnoses?: boolean
     diagnoses?: string
+    doctor_limit?: string
+    doctor_limit_reason?: string
+    medical_restriction?: string
+    restriction_text?: string
   },
 >(values: T): T {
-  const out: T = { ...values }
+  const out: T = normalizeTraining({ ...values })
   if (out.allergies !== true) delete out.allergies_text
   if (out.surgery !== true) delete out.surgery_text
   if (out.sex !== 'female') delete out.pregnancies

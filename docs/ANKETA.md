@@ -16,7 +16,7 @@ Klijent pre kupovine popunjava anketu sa Olgicinim pitanjima. Odgovori idu u zdr
 
 | # | Odluka | Zašto |
 |---|---|---|
-| D1 | 5 koraka: O vama · Zdravlje · Navike i san · Posao i ishrana · Nalazi i saglasnost | po 4–8 pitanja po ekranu |
+| D1 | 10 koraka: 1–4 Olgica (O vama · Zdravlje · Navike i san · Posao i ishrana), 5–9 Ognjen (Vežbanje · Zdravlje i bezbednost · Trenažno iskustvo · Test motoričkih sposobnosti · Kondicija i oporavak), 10 Nalazi i saglasnost | po 3–9 pitanja po ekranu; Ognjenov deo je u istoj anketi, ispunjavaju ga svi klijenti |
 | D2 | Dodato polje **Pol** (Žena / Muškarac) | potrebno da se pitanje o trudnoćama prikaže samo ženama |
 | D3 | Dodato polje **Država u kojoj živite** | uz pitanje o sunčanim danima, i za kasnije tržište |
 | D4 | Ime, email i telefon ostaju obavezni (od ranije) | nalog i WhatsApp |
@@ -86,6 +86,21 @@ Oznake: **\*** obavezno · `if` uslov prikaza.
 | `consent_health` | Saglasnost za zdravstvene podatke i nalaze \* | checkbox | mora biti štiklirano |
 | `consent_terms` | Politika privatnosti i uslovi korišćenja \* | checkbox | mora biti štiklirano |
 
+### Koraci 5–9 · Ognjenova pitanja (`src/lib/trainingSchema.ts`)
+Visina i težina su u koraku 1, gde je i **BMI kalkulator** (kg / m², uživo, sa tabelom klasifikacije). Sva pitanja su obavezna. `schema_version = 2`.
+
+| Korak | Pitanja (id) |
+|---|---|
+| 5 Vežbanje | `goals` (više izbora), `place` (kod kuće / u teretani) |
+| 6 Zdravlje i bezbednost | `doctor_limit` (+ `doctor_limit_reason` ako Da), `chest_pain`, `injury`, `medical_restriction` (+ `restriction_text` ako Da) |
+| 7 Trenažno iskustvo | `train_duration`, `train_frequency`, `technique`, `long_break` |
+| 8 Test motoričkih sposobnosti | `chair_stands`, `pushups_knees`, `pushups_feet`, `plank_knees`, `plank_feet`, `single_leg`, `movement_pain` |
+| 9 Kondicija i oporavak | `stairs`, `cardio_duration`, `recovery`; ispod prikaz opreme (kod kuće: lista, teretana: sva oprema) |
+
+- Dodato uz Ognjenove opsege: „Ne mogu / nisam probao/la“ za sklekove.
+- Bol u grudima ili ograničenje lekara: klijent vidi napomenu da se javi lekaru. Bezbednosne oznake (`safetyFlags`) vidi Ognjen.
+- `exercise_level` u `intake_surveys` je sada predlog iz bodova (0–31: ≥ 70 % napredni, ≥ 40 % srednji, ostalo početni; sa bezbednosnom oznakom uvek početni). Ognjen potvrđuje.
+
 ## 4. Ponašanje forme
 
 - Na svakom „Nastavi“ validira se samo taj korak. Greška se prikazuje ispod polja, crvenom (#B42A18), i fokus ide na prvo pogrešno polje.
@@ -149,7 +164,7 @@ Izmene su već unete u `supabase/migrations/0001_init.sql`:
 
 - Unit: svaka validacija iz sekcije 3; 17 godina ne prolazi, 18 prolazi; „Ništa od navedenog“ isključuje ostale; uslovna polja se brišu kad uslov nestane; mapiranje aktivnosti u nivo.
 - Komponente: tastatura i čitač ekrana (labele, `aria-pressed`, greške vezane za polje).
-- E2E: popuni 5 koraka sa jednim PDF-om → izbor plana; osveži stranicu na koraku 3 → odgovori su tu; muškarac ne vidi pitanje o trudnoćama.
+- E2E: popuni 10 koraka sa jednim PDF-om → izbor plana; osveži stranicu na koraku 3 → odgovori su tu; muškarac ne vidi pitanje o trudnoćama.
 - RLS: anon ne može da čita `intake_surveys` ni `labs`.
 
 ## 12. Prompt za Claude Code

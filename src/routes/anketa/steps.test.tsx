@@ -53,7 +53,7 @@ describe('Anketa · korak 1', () => {
     const alerts = await screen.findAllByRole('alert')
     expect(alerts.map((a) => a.textContent)).toContain('Program je za osobe starije od 18 godina')
     expect(screen.getByLabelText(/Datum rođenja/)).toHaveFocus()
-    expect(screen.queryByText(/korak 2 od 5/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/korak 2 od 10/)).not.toBeInTheDocument()
   })
 
   it('ispravan korak čuva nacrt i vodi na korak 2', async () => {
@@ -69,7 +69,7 @@ describe('Anketa · korak 1', () => {
       country: 'Srbija',
     })
     await next()
-    expect(await screen.findByText(/korak 2 od 5/)).toBeInTheDocument()
+    expect(await screen.findByText(/korak 2 od 10/)).toBeInTheDocument()
     const saved = JSON.parse(localStorage.getItem(INTAKE_DRAFT_KEY)!).values
     expect(saved).toMatchObject({
       full_name: 'Ana Marković',
@@ -122,7 +122,7 @@ describe('Anketa · korak 2', () => {
     expect(await screen.findByText(/Navedite dijagnoze ili označite/)).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Nemam dijagnoza' }))
     await next()
-    expect(await screen.findByText(/korak 3 od 5/)).toBeInTheDocument()
+    expect(await screen.findByText(/korak 3 od 10/)).toBeInTheDocument()
   })
 })
 
@@ -155,7 +155,7 @@ describe('Anketa · korak 4', () => {
 
 describe('Anketa · rute', () => {
   it('nepoznat korak vodi na prvi', () => {
-    renderStep(9)
-    expect(screen.getByText(/korak 1 od 5/)).toBeInTheDocument()
+    renderStep(11)
+    expect(screen.getByText(/korak 1 od 10/)).toBeInTheDocument()
   })
 })

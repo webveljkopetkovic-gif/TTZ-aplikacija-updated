@@ -1,5 +1,5 @@
 /**
- * Glavni tok: landing → anketa (5 koraka, jedan PDF) → izbor plana → uplata (manual) → ekran Dan 0.
+ * Glavni tok: landing → anketa (10 koraka: Olgica 1–4, Ognjen 5–9, nalazi i saglasnost 10; jedan PDF) → izbor plana → uplata (manual) → ekran Dan 0.
  * Traži: `npx supabase start` + `npx supabase functions serve` + seed (`db reset`). Dev server pokreće Playwright.
  * Sa SCREENSHOT_DIR=<folder> snima ekrane za poređenje sa design/.
  */
@@ -58,6 +58,65 @@ async function fillStep3(page: Page) {
   await radio(page, 'Trajanje sna', '6–7 h').click()
   await radio(page, 'Vreme napolju', '< 30 min').click()
   await radio(page, 'Nedovoljno sunčanih dana', 'Ne').click()
+}
+
+/** Koraci 5–9 (Ognjenova pitanja). Segmenti su radio grupe, liste su kartice (klik na labelu). */
+async function fillTrainingSteps(page: Page) {
+  const next = () => page.getByRole('button', { name: 'Nastavi' }).click()
+  const card = (text: RegExp) => page.locator('label', { hasText: text }).click()
+
+  await expect(page).toHaveURL(/\/anketa\/5$/)
+  await page.getByRole('button', { name: 'Gubitak telesne masti' }).click()
+  await radio(page, 'Mesto treninga', 'Kod kuće').click()
+  await next()
+
+  await expect(page).toHaveURL(/\/anketa\/6$/)
+  for (const q of [
+    'Da li vam je lekar rekao da ograničite fizičku aktivnost?',
+    'Da li ste tokom aktivnosti imali bol u grudima, nesvesticu ili neuobičajeno izraženo gušenje?',
+    'Da li trenutno imate povredu ili bol koji utiče na vežbanje?',
+    'Da li imate medicinsko ograničenje za određene vežbe?',
+  ]) {
+    await radio(page, q, 'Ne').click()
+  }
+  await next()
+
+  await expect(page).toHaveURL(/\/anketa\/7$/)
+  await card(/^3–12 meseci/)
+  await card(/^1–2 puta nedeljno/)
+  await card(/^Poznajem neke/)
+  await radio(page, 'Pauza duža od 3 meseca u poslednjih godinu dana?', 'Ne').click()
+  await next()
+
+  await expect(page).toHaveURL(/\/anketa\/8$/)
+  await radio(page, 'Broj sedanja i ustajanja sa kuhinjske stolice', '10–19').click()
+  const options = page.locator('[data-field]')
+  await options
+    .filter({ hasText: 'osloncem na kolena i ruke' })
+    .locator('label', { hasText: /^5–10/ })
+    .click()
+  await options
+    .filter({ hasText: 'osloncem na stopala i ruke' })
+    .locator('label', { hasText: /^Ne mogu/ })
+    .click()
+  await options
+    .filter({ hasText: 'osloncem na kolena i laktove' })
+    .locator('label', { hasText: /^20–44 s/ })
+    .click()
+  await options
+    .filter({ hasText: 'osloncem na stopala i laktove' })
+    .locator('label', { hasText: /^Ne znam/ })
+    .click()
+  await card(/^Da, uz teškoće/)
+  await radio(page, 'Bol ili gubitak kontrole tokom čučnja, iskoraka ili skleka', 'Ne').click()
+  await next()
+
+  await expect(page).toHaveURL(/\/anketa\/9$/)
+  await card(/^Umereno se zadišem/)
+  await card(/^20–40 min/)
+  await card(/^24–48 sati/)
+  await expect(page.getByText('Trake za razvlačenje')).toBeVisible()
+  await next()
 }
 
 test.afterAll(async () => {
@@ -169,8 +228,11 @@ test('landing → anketa → plan → uplata → dan 0', async ({ page, browser 
   await shot(page, '05-anketa-4')
   await page.getByRole('button', { name: 'Nastavi' }).click()
 
-  // korak 5: jedan PDF, kanali i saglasnosti
-  await expect(page).toHaveURL(/\/anketa\/5$/)
+  // koraci 5–9: Ognjenova pitanja
+  await fillTrainingSteps(page)
+
+  // korak 10: jedan PDF, kanali i saglasnosti
+  await expect(page).toHaveURL(/\/anketa\/10$/)
   await page.getByTestId('lab-file-input').setInputFiles({
     name: 'Krvna slika.pdf',
     mimeType: 'application/pdf',
@@ -179,7 +241,7 @@ test('landing → anketa → plan → uplata → dan 0', async ({ page, browser 
   await expect(page.getByText('PDF · 1 KB')).toBeVisible()
   await tick(page, /Saglasna\/saglasan sam/)
   await tick(page, /Pročitao\/la sam/)
-  await shot(page, '06-anketa-5')
+  await shot(page, '06-anketa-10')
   await page.getByRole('button', { name: 'Pošalji anketu' }).click()
 
   // izbor plana i nalog
