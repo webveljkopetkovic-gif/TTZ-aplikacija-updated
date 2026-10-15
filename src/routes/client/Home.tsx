@@ -8,6 +8,7 @@ import {
   useToggleSupplement,
   useWorkoutsForLevel,
 } from '@/api/client'
+import { useMyFeedbacks } from '@/api/feedback'
 import { CheckCircle, ErrorNote, Loading, Panel, Pill, Screen } from '@/components/client/ui'
 import { Avatar } from '@/components/ui'
 import { useMyProgram } from '@/hooks/useMyProgram'
@@ -34,6 +35,10 @@ export default function Home() {
   const supplementLogs = useSupplementLogs(programId, my.day)
   const toggleSupplement = useToggleSupplement(programId, my.day)
   const workouts = useWorkoutsForLevel(my.withTraining ? my.program?.exercise_level : null)
+  const feedbacks = useMyFeedbacks(programId)
+  const openFeedback = (feedbacks.data ?? []).find(
+    (f) => f.status === 'open' || f.status === 'late',
+  )
 
   const today = mealsForDay(meals.data ?? [], my.planDay, my.cycle)
   const done = mealLogs.data ?? new Set<string>()
@@ -67,6 +72,22 @@ export default function Home() {
       </header>
 
       <div className="mt-6 flex flex-col gap-4">
+        {openFeedback && (
+          <Link
+            to={`/app/feedback/${openFeedback.due_day}`}
+            className="flex items-center gap-4 rounded-card-lg bg-brand p-5 text-ink"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-lg font-extrabold">
+                {openFeedback.status === 'late'
+                  ? `Čekamo tvoj feedback za dan ${openFeedback.due_day}`
+                  : `Feedback za dan ${openFeedback.due_day} je otvoren`}
+              </span>
+              <span className="block">Treba ti samo 2 minuta</span>
+            </span>
+            <span aria-hidden="true">›</span>
+          </Link>
+        )}
         <Panel>
           <div className="flex items-center justify-between gap-3">
             <Pill>Ishrana · Olgica</Pill>

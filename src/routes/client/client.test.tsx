@@ -9,6 +9,7 @@ const state = vi.hoisted(() => ({
   meals: [] as PlanMeal[],
   done: new Set<string>(),
   toggle: vi.fn(),
+  feedbacks: [] as { id: string; due_day: number; status: string }[],
 }))
 
 vi.mock('@/hooks/useMyProgram', () => ({ useMyProgram: () => state.my }))
@@ -25,6 +26,15 @@ vi.mock('@/api/client', () => {
     useWorkoutsForLevel: () => ok([]),
   }
 })
+
+vi.mock('@/api/feedback', () => ({
+  useMyFeedbacks: () => ({
+    data: state.feedbacks,
+    isPending: false,
+    isError: false,
+    isSuccess: true,
+  }),
+}))
 
 import Home from './Home'
 import Journey from './Journey'
@@ -69,6 +79,7 @@ const renderAt = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRo
 
 beforeEach(() => {
   state.done = new Set()
+  state.feedbacks = []
   state.toggle.mockClear()
   state.meals = [
     meal(1, 'breakfast', 'Jaja i avokado', '08:00:00'),
@@ -113,6 +124,23 @@ describe('Početna', () => {
     renderAt(<Home />)
     expect(screen.getByRole('button', { name: /Vitamin D3 · doručak/ })).toBeInTheDocument()
     expect(screen.getByText('Sledeći feedback za 9 dana')).toBeInTheDocument()
+  })
+
+  it('otvoren feedback se vidi kao baner sa vezom na formu', () => {
+    state.my = myProgram(10, 10, 1)
+    state.feedbacks = [{ id: 'f1', due_day: 10, status: 'open' }]
+    renderAt(<Home />)
+    expect(screen.getByRole('link', { name: /Feedback za dan 10 je otvoren/ })).toHaveAttribute(
+      'href',
+      '/app/feedback/10',
+    )
+  })
+
+  it('bez otvorenog feedbacka nema banera', () => {
+    state.my = myProgram(3, 3, 1)
+    state.feedbacks = [{ id: 'f1', due_day: 10, status: 'scheduled' }]
+    renderAt(<Home />)
+    expect(screen.queryByText(/je otvoren/)).not.toBeInTheDocument()
   })
 
   it('bez vežbi nema kartice za trening', () => {

@@ -3,13 +3,15 @@ import TeamLayout from '@/components/team/TeamLayout'
 import { Page } from '@/components/team/ui'
 import TeamClients from './TeamClients'
 import TeamDossier from './TeamDossier'
+import TeamFeedback from './TeamFeedback'
 import TeamMaterials from './TeamMaterials'
+import TeamNotifications from './TeamNotifications'
 import TeamOverview from './TeamOverview'
 import TeamPayments from './TeamPayments'
 import TeamPlan from './TeamPlan'
 import { RequireRole } from '@/components/RequireRole'
 
-/** Ekrani koji se prave u kasnijim fazama (feedback: Faza 5, pitanja: Faza 6). */
+/** Ekrani koji se prave u kasnijim fazama (pitanja: Faza 6). */
 function Soon({ title, phase }: { title: string; phase: number }) {
   return (
     <Page>
@@ -19,7 +21,7 @@ function Soon({ title, phase }: { title: string; phase: number }) {
   )
 }
 
-/** Konzola tima (/tim/*): Pregled, Dosijei, Zdravstveni dosije, Plan za klijenta, Materijali. */
+/** Konzola tima (/tim/*): Pregled, Dosijei, Zdravstveni dosije, Plan za klijenta, Feedback, Obaveštenja, Materijali. */
 export default function TeamRoutes() {
   return (
     <Routes>
@@ -29,7 +31,9 @@ export default function TeamRoutes() {
         <Route path="klijenti/:id" element={<TeamDossier />} />
         <Route path="klijenti/:id/plan" element={<TeamPlan />} />
         <Route path="materijali" element={<TeamMaterials />} />
-        <Route path="feedback/*" element={<Soon title="Feedback" phase={5} />} />
+        <Route path="feedback" element={<TeamFeedback />} />
+        <Route path="feedback/:id" element={<TeamFeedback />} />
+        <Route path="obavestenja" element={<TeamNotifications />} />
         <Route path="pitanja" element={<Soon title="Pitanja" phase={6} />} />
         <Route
           path="uplate"

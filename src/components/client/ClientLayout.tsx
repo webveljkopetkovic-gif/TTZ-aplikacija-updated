@@ -45,6 +45,7 @@ export default function ClientLayout() {
     { to: '/app/suplementi', label: 'Suplementi', icon: <FileIcon /> },
     ...(my.withTraining ? [{ to: '/app/vezbe', label: 'Vežbe', icon: <DumbbellIcon /> }] : []),
     { to: '/app/tok', label: 'Tok programa', icon: <ClipboardIcon /> },
+    { to: '/app/feedback', label: 'Feedback', icon: <ClipboardIcon /> },
     { to: '/app/napredak', label: 'Napredak', icon: <GridIcon /> },
     { to: '/app/pitanja', label: 'Pitanja', icon: <QuestionIcon /> },
   ]

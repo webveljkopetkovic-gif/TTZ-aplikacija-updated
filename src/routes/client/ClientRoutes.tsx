@@ -7,6 +7,8 @@ import { Button } from '@/components/ui'
 import { homeForStatus } from '@/lib/programHome'
 import DayOne from './DayOne'
 import DayZero from './DayZero'
+import Feedback from './Feedback'
+import FeedbackForm from './FeedbackForm'
 import Home from './Home'
 import Journey from './Journey'
 import Meals from './Meals'
@@ -72,7 +74,8 @@ export default function ClientRoutes() {
         <Route path="tok" element={<Journey />} />
         <Route path="napredak" element={<Progress />} />
         <Route path="tim" element={<Team />} />
-        <Route path="feedback/*" element={<ComingSoon title="Feedback" phase={5} />} />
+        <Route path="feedback" element={<Feedback />} />
+        <Route path="feedback/:day" element={<FeedbackForm />} />
         <Route path="pitanja" element={<ComingSoon title="Pitanja" phase={6} />} />
       </Route>
       <Route path="*" element={<Navigate to="/app" replace />} />

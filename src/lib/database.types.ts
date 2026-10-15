@@ -549,6 +549,7 @@ export type Database = {
       }
       notifications: {
         Row: {
+          attempts: number
           channel: Database['public']['Enums']['msg_channel']
           client_id: string
           dedupe_key: string | null
@@ -563,6 +564,7 @@ export type Database = {
         }
         ComputedFields: never
         Insert: {
+          attempts?: number
           channel: Database['public']['Enums']['msg_channel']
           client_id: string
           dedupe_key?: string | null
@@ -576,6 +578,7 @@ export type Database = {
           template?: string | null
         }
         Update: {
+          attempts?: number
           channel?: Database['public']['Enums']['msg_channel']
           client_id?: string
           dedupe_key?: string | null
@@ -1297,6 +1300,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      invoke_scheduler: { Args: Record<PropertyKey, never>; Returns: undefined }
       is_admin_or_partner: { Args: Record<PropertyKey, never>; Returns: boolean }
       is_own_folder: { Args: { p_name: string }; Returns: boolean }
       is_team: { Args: Record<PropertyKey, never>; Returns: boolean }

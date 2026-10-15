@@ -190,7 +190,7 @@ begin
   from (values (g_ana, v_today), (g_ivana, v_today - 19)) as x(g, a), unnest(array[10, 20, 30]) as d;
 
   update feedbacks set status = 'answered', submitted_at = now() - interval '9 days',
-         answers = '{"general":4,"energy":3,"digestion":"bolje","hunger":"uveče","sleep":"6 h","dislikes":["riba"],"exercise":"prija","comment":"Sve ok"}'
+         answers = '{"version":1,"general":4,"energy_am":3,"food_tags":["hunger"],"food_text":"Posle ručka","exercise_tags":["all_ok"],"exercise_text":"","challenges":"Uveče posle posla sam gladna","weight_kg":80.2,"waist_cm":88.5,"reply_channels":["whatsapp"]}'
    where program_id = g_ivana and due_day = 10
    returning id into v_fb10;
 

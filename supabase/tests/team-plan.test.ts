@@ -143,7 +143,7 @@ describe('publish-plan', () => {
         [IDS.jelena],
       )
       expect(rows.map((r) => r.channel).sort()).toEqual(['email', 'whatsapp'])
-      expect(rows.every((r) => r.status === 'queued')).toBe(true)
+      expect(rows.every((r) => ['queued', 'sent'].includes(r.status))).toBe(true)
     })
   })
 

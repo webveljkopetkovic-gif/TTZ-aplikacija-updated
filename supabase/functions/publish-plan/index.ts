@@ -1,8 +1,9 @@
 // Tim šalje plan klijentu jednim klikom: provera plana, status 'ready', plan_ready_at i poruka 'plan_ready'.
-// Samo red u notifications; slanje (WhatsApp, email) dolazi u Fazi 5. Idempotentno: drugi poziv ništa ne duplira.
+// Poruka ide kroz notifications i šalje se odmah (WhatsApp + email). Idempotentno: drugi poziv ništa ne duplira.
 import { z } from 'zod'
 import { adminClient, HttpError, json, serve } from '../_shared/http.ts'
 import { mealViolation } from '../_shared/mealRules.ts'
+import { dispatchQueued } from '../_shared/notify.ts'
 
 const body = z.object({ program_id: z.guid() })
 const TEAM_ROLES = ['nutritionist', 'trainer', 'admin']
@@ -98,6 +99,8 @@ serve(async (req, raw) => {
     { onConflict: 'dedupe_key', ignoreDuplicates: true },
   )
   if (notifyError) throw notifyError
+  // neuspelo slanje ne sme da poništi plan: poruka ostaje u redu i scheduler je šalje ponovo
+  await dispatchQueued(admin).catch((e) => console.error('Slanje poruke nije uspelo', e))
 
   return json({ program_id: programId, already_published: false, channels: chosen })
 })

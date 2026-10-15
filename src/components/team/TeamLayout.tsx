@@ -85,6 +85,7 @@ export default function TeamLayout() {
     { to: '/tim/klijenti', label: 'Dosijei', icon: <FileIcon /> },
     { to: '/tim/feedback', label: 'Feedback', icon: <ClipboardIcon /> },
     { to: '/tim/pitanja', label: 'Pitanja', icon: <QuestionIcon /> },
+    { to: '/tim/obavestenja', label: 'Obaveštenja', icon: <FileIcon /> },
     { to: '/tim/materijali', label: 'Materijali', icon: <FolderIcon /> },
     ...(role === 'admin' ? [{ to: '/tim/uplate', label: 'Uplate', icon: <FileIcon /> }] : []),
   ]

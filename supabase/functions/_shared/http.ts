@@ -82,3 +82,29 @@ export async function enforceRateLimit(
   if (error) throw error
   if (data === false) throw new HttpError('Previše pokušaja. Pokušaj ponovo kasnije.', 429)
 }
+
+/** Poziv sa service role ključem (pg_cron, druge funkcije), poređenje bez ranog izlaska po prvom različitom znaku. */
+export function isServiceCall(req: Request): boolean {
+  const expected = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  const given = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? ''
+  if (!expected || given.length !== expected.length) return false
+  let diff = 0
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ given.charCodeAt(i)
+  return diff === 0
+}
+
+export const TEAM_ROLES = ['nutritionist', 'trainer', 'admin']
+
+/** Prijavljen korisnik (id i uloga) iz Authorization zaglavlja; null ako token nije ispravan. */
+export async function callerOf(admin: SupabaseClient, req: Request) {
+  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
+  if (!token) return null
+  const { data, error } = await admin.auth.getUser(token)
+  if (error || !data.user) return null
+  const { data: profile } = await admin
+    .from('profiles')
+    .select('id, role')
+    .eq('id', data.user.id)
+    .maybeSingle()
+  return profile ? { id: profile.id as string, role: profile.role as string } : null
+}

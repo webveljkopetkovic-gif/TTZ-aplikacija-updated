@@ -3,8 +3,20 @@ import { cn } from '@/lib/cn'
 import { statusOf } from '@/lib/teamStatus'
 
 /** Okvir stranice tima: širina i razmak su isti na svim ekranima. */
-export function Page({ children, className }: { children: ReactNode; className?: string }) {
-  return <main className={cn('mx-auto w-full max-w-3xl px-6 pt-8', className)}>{children}</main>
+export function Page({
+  children,
+  className,
+  wide,
+}: {
+  children: ReactNode
+  className?: string
+  wide?: boolean
+}) {
+  return (
+    <main className={cn('mx-auto w-full px-6 pt-8', wide ? 'max-w-6xl' : 'max-w-3xl', className)}>
+      {children}
+    </main>
+  )
 }
 
 export function Section({
