@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn'
 import { countIntakeAnswers } from '@/lib/intakeDerived'
 import { EXERCISE_LEVEL_LABEL, firstName, type ExerciseLevel } from '@/lib/labels'
 import { belgradeDate } from '@/lib/programDay'
-import { homeForStatus } from './ClientRoutes'
+import { homeForStatus } from '@/lib/programHome'
 
 type StepState = 'done' | 'current' | 'upcoming'
 

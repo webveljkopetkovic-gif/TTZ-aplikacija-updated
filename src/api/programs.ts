@@ -15,9 +15,9 @@ export function useCurrentProgram(userId: string | undefined) {
       const { data, error } = await supabase
         .from('programs')
         .select(
-          `id, status, duration_days, exercise_level, plan_focus, paid_at, plan_ready_at, activated_at, created_at,
+          `id, status, duration_days, exercise_level, training_weekdays, plan_focus, paid_at, plan_ready_at, activated_at, created_at,
            products ( name, kind ),
-           intake_surveys ( submitted_at, answers )`,
+           intake_surveys ( submitted_at, answers, start_weight_kg )`,
         )
         .eq('client_id', userId!)
         .order('created_at', { ascending: false })

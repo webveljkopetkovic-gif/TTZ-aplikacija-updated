@@ -3,7 +3,7 @@ import { useSession, useSignOut } from '@/api/auth'
 import { useCurrentProgram, useManualPaymentSettings, useProgramPayment } from '@/api/programs'
 import { formatRsd } from '@/api/products'
 import { Button, Card } from '@/components/ui'
-import { homeForStatus } from './ClientRoutes'
+import { homeForStatus } from '@/lib/programHome'
 
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (

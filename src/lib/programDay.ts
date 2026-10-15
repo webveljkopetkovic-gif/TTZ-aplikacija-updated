@@ -84,3 +84,9 @@ export function isTrainingDay(date: DateInput, weekdays: readonly number[]): boo
 export function daysLeft(day: number, duration = DEFAULT_DURATION_DAYS): number {
   return Math.max(0, duration - Math.max(day, 0))
 }
+
+/** Kalendarski datum ('YYYY-MM-DD') za dan programa: dan 1 = activated_at. */
+export function dateOfProgramDay(activatedAt: string, day: number): string {
+  const d = new Date((dayNumber(activatedAt) + day - 1) * 86_400_000)
+  return d.toISOString().slice(0, 10)
+}
