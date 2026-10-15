@@ -818,6 +818,7 @@ export type Database = {
           exercise_level: Database['public']['Enums']['exercise_level'] | null
           id: string
           intake_id: string | null
+          meal_template_id: string | null
           paid_at: string | null
           plan_focus: string | null
           plan_ready_at: string | null
@@ -836,6 +837,7 @@ export type Database = {
           exercise_level?: Database['public']['Enums']['exercise_level'] | null
           id?: string
           intake_id?: string | null
+          meal_template_id?: string | null
           paid_at?: string | null
           plan_focus?: string | null
           plan_ready_at?: string | null
@@ -853,6 +855,7 @@ export type Database = {
           exercise_level?: Database['public']['Enums']['exercise_level'] | null
           id?: string
           intake_id?: string | null
+          meal_template_id?: string | null
           paid_at?: string | null
           plan_focus?: string | null
           plan_ready_at?: string | null
@@ -862,6 +865,13 @@ export type Database = {
           training_weekdays?: number[]
         }
         Relationships: [
+          {
+            foreignKeyName: 'programs_meal_template_id_fkey'
+            columns: ['meal_template_id']
+            isOneToOne: false
+            referencedRelation: 'meal_templates'
+            referencedColumns: ['id']
+          },
           {
             foreignKeyName: 'programs_client_id_fkey'
             columns: ['client_id']
@@ -1253,6 +1263,7 @@ export type Database = {
           plan_focus: string | null
           plan_name: string | null
           program_day: number | null
+          product_kind: Database['public']['Enums']['plan_kind'] | null
           program_id: string | null
           program_status: Database['public']['Enums']['program_status'] | null
           team_status: string | null
@@ -1262,6 +1273,10 @@ export type Database = {
       }
     }
     Functions: {
+      apply_meal_template: {
+        Args: { p_program_id: string; p_template_id: string }
+        Returns: number
+      }
       check_rate_limit: {
         Args: { p_key: string; p_max: number; p_window_seconds: number }
         Returns: boolean

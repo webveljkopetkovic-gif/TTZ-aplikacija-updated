@@ -10,8 +10,8 @@ import Login from '@/routes/Login'
 import ClientRoutes from '@/routes/client/ClientRoutes'
 import Landing from '@/routes/Landing'
 import PlanChoice from '@/routes/PlanChoice'
-import { PartnerHome, TeamHome } from '@/routes/Placeholders'
-import TeamPayments from '@/routes/tim/TeamPayments'
+import { PartnerHome } from '@/routes/Placeholders'
+import TeamRoutes from '@/routes/tim/TeamRoutes'
 import ResetPassword from '@/routes/ResetPassword'
 
 const DevUi = lazy(() => import('@/routes/DevUi'))
@@ -40,18 +40,10 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/tim/uplate"
-          element={
-            <RequireRole allow={['admin']}>
-              <TeamPayments />
-            </RequireRole>
-          }
-        />
-        <Route
           path="/tim/*"
           element={
             <RequireRole allow={['nutritionist', 'trainer', 'admin']}>
-              <TeamHome />
+              <TeamRoutes />
             </RequireRole>
           }
         />

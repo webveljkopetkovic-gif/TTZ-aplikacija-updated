@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { useProfile, useSession, useSignOut } from '@/api/auth'
 import { Button } from '@/components/ui'
 
-/** Privremeni ekrani dok se ne naprave pravi (Faze 3, 4 i 8). */
+/** Privremeni ekrani dok se ne naprave pravi (Faza 8). */
 function Placeholder({ title }: { title: string }) {
   const session = useSession()
   const profile = useProfile(session.data?.user.id)
@@ -26,5 +26,4 @@ function Placeholder({ title }: { title: string }) {
   )
 }
 
-export const TeamHome = () => <Placeholder title="Konzola tima" />
 export const PartnerHome = () => <Placeholder title="Partner panel" />
