@@ -9,6 +9,7 @@ import {
   planCycle,
   planDay,
   programDay,
+  programPhase,
 } from './programDay'
 
 /** Dan programa kad je Dan 1 = 2026-01-05 (ponedeljak), a „danas“ je zadati dan. */
@@ -164,5 +165,29 @@ describe('daysLeft', () => {
     expect(daysLeft(31)).toBe(0)
     expect(daysLeft(0)).toBe(30)
     expect(daysLeft(10, 60)).toBe(50)
+  })
+})
+
+describe('programPhase', () => {
+  it('pre dana 1 je „before“, do dana 27 „active“', () => {
+    expect(programPhase(0)).toBe('before')
+    expect(programPhase(1)).toBe('active')
+    expect(programPhase(27)).toBe('active')
+  })
+
+  it('dani 28–30 su „ending“ (ponuda nastavka)', () => {
+    expect(programPhase(28)).toBe('ending')
+    expect(programPhase(30)).toBe('ending')
+  })
+
+  it('31–60 je samo čitanje, posle toga istekao', () => {
+    expect(programPhase(31)).toBe('read_only')
+    expect(programPhase(60)).toBe('read_only')
+    expect(programPhase(61)).toBe('expired')
+  })
+
+  it('prati trajanje programa', () => {
+    expect(programPhase(58, 60)).toBe('ending')
+    expect(programPhase(61, 60)).toBe('read_only')
   })
 })

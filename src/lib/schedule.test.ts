@@ -28,3 +28,14 @@ describe('raspored feedbacka pri aktivaciji', () => {
     expect(belgradeToday(new Date('2026-10-14T21:30:00Z'))).toBe('2026-10-14')
   })
 })
+
+describe('programDayOn (server) je isto što i programDay (klijent)', () => {
+  it('isti rezultat za dane pre, na i posle aktivacije', async () => {
+    const { programDay } = await import('./programDay')
+    const { programDayOn } = await import('./schedule')
+    for (const today of ['2026-10-04', '2026-10-05', '2026-10-14', '2026-11-03', '2026-12-31']) {
+      expect(programDayOn('2026-10-05', today)).toBe(programDay('2026-10-05', today))
+    }
+    expect(programDayOn(null, '2026-10-05')).toBe(0)
+  })
+})

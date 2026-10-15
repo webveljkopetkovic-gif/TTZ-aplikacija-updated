@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { useProfile, useSession, useSignOut } from '@/api/auth'
+import { useSession } from '@/api/auth'
 import { useCurrentProgram } from '@/api/programs'
 import ClientLayout from '@/components/client/ClientLayout'
 import { ComingSoon } from '@/components/client/ui'
-import { Button } from '@/components/ui'
 import { homeForStatus } from '@/lib/programHome'
 import DayOne from './DayOne'
 import DayZero from './DayZero'
+import End from './End'
 import Feedback from './Feedback'
 import FeedbackForm from './FeedbackForm'
 import Home from './Home'
@@ -41,22 +41,6 @@ function ProgramRedirect() {
   return <Navigate to={homeForStatus(program.data.status)} replace />
 }
 
-/** Kraj programa stiže u Fazi 7. */
-function EndOfProgram() {
-  const session = useSession()
-  const profile = useProfile(session.data?.user.id)
-  const signOut = useSignOut()
-  return (
-    <main className="mx-auto max-w-md px-6 py-10">
-      <h1 className="text-3xl font-extrabold">Kraj programa</h1>
-      <p className="mt-2 text-muted">{profile.data?.full_name}, ovaj ekran stiže u Fazi 7.</p>
-      <Button className="mt-6" variant="soft" onClick={() => signOut.mutate()}>
-        Odjavi se
-      </Button>
-    </main>
-  )
-}
-
 export default function ClientRoutes() {
   return (
     <Routes>
@@ -64,7 +48,7 @@ export default function ClientRoutes() {
       <Route path="uplata" element={<PaymentPending />} />
       <Route path="priprema" element={<DayZero />} />
       <Route path="dan-1" element={<DayOne />} />
-      <Route path="kraj" element={<EndOfProgram />} />
+      <Route path="kraj" element={<End />} />
       <Route element={<ClientLayout />}>
         <Route path="danas" element={<Home />} />
         <Route path="ishrana" element={<Meals />} />

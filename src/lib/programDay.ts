@@ -90,3 +90,22 @@ export function dateOfProgramDay(activatedAt: string, day: number): string {
   const d = new Date((dayNumber(activatedAt) + day - 1) * 86_400_000)
   return d.toISOString().slice(0, 10)
 }
+
+/** Dva dana pre kraja (dan 28 od 30) otvara se ponuda za nastavak. */
+export const ENDING_WINDOW_DAYS = 2
+/** Posle kraja klijent još 30 dana može da čita plan i izveštaj; posle toga samo izveštaj i ponuda. */
+export const READ_ONLY_DAYS = 30
+
+export type ProgramPhase = 'before' | 'active' | 'ending' | 'read_only' | 'expired'
+
+/**
+ * Faza programa po danu: pre Dana 1, aktivan, pred kraj (poslednja 3 dana, ponuda nastavka),
+ * samo čitanje (30 dana posle kraja) i istekao (samo izveštaj i ponuda).
+ */
+export function programPhase(day: number, duration = DEFAULT_DURATION_DAYS): ProgramPhase {
+  if (day < 1) return 'before'
+  if (day <= duration - ENDING_WINDOW_DAYS - 1) return 'active'
+  if (day <= duration) return 'ending'
+  if (day <= duration + READ_ONLY_DAYS) return 'read_only'
+  return 'expired'
+}

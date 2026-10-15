@@ -8,6 +8,8 @@ export interface SidebarItem {
   label: string
   icon: ReactNode
   count?: number
+  /** Aktivna samo na tačnoj adresi (npr. Pregled na /tim, da ne svetli na svim podstranama). */
+  end?: boolean
 }
 
 /** Levi sidebar, samo od 1024px naviše. */
@@ -32,6 +34,7 @@ export function Sidebar({
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.end}
             className={({ isActive }) =>
               cn(
                 'flex min-h-btn items-center gap-3 rounded-2xl px-4 text-base font-bold',

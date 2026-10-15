@@ -10,6 +10,7 @@ import {
   QuestionIcon,
 } from '@/components/ui/icons'
 import { useMyProgram } from '@/hooks/useMyProgram'
+import { programPhase } from '@/lib/programDay'
 import { homeForStatus } from '@/lib/programHome'
 
 /**
@@ -34,10 +35,12 @@ export default function ClientLayout() {
     )
   }
   if (!my.program) return <Navigate to="/app" replace />
-  if (my.program.status !== 'active') {
-    return <Navigate to={homeForStatus(my.program.status)} replace />
-  }
-  if (my.day > my.duration) return <Navigate to="/app/kraj" replace />
+  // aktivan program, ili završen dok traje čitanje (30 dana posle kraja); posle toga samo izveštaj i ponuda
+  const phase = programPhase(my.day, my.duration)
+  const readable =
+    my.program.status === 'active' || (my.program.status === 'ended' && phase === 'read_only')
+  if (!readable) return <Navigate to={homeForStatus(my.program.status)} replace />
+  if (phase === 'expired') return <Navigate to="/app/kraj" replace />
 
   const items: SidebarItem[] = [
     { to: '/app/danas', label: 'Početna', icon: <HomeIcon /> },

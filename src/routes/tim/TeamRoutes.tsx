@@ -9,6 +9,7 @@ import TeamNotifications from './TeamNotifications'
 import TeamOverview from './TeamOverview'
 import TeamPayments from './TeamPayments'
 import TeamPlan from './TeamPlan'
+import TeamReport from './TeamReport'
 import { RequireRole } from '@/components/RequireRole'
 
 /** Ekrani koji se prave u kasnijim fazama (pitanja: Faza 6). */
@@ -30,6 +31,7 @@ export default function TeamRoutes() {
         <Route path="klijenti" element={<TeamClients />} />
         <Route path="klijenti/:id" element={<TeamDossier />} />
         <Route path="klijenti/:id/plan" element={<TeamPlan />} />
+        <Route path="klijenti/:id/izvestaj" element={<TeamReport />} />
         <Route path="materijali" element={<TeamMaterials />} />
         <Route path="feedback" element={<TeamFeedback />} />
         <Route path="feedback/:id" element={<TeamFeedback />} />

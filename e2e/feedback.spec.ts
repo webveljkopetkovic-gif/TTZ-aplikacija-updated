@@ -94,7 +94,9 @@ test('klijentkinja šalje feedback, Olgica odgovara, klijentkinja vidi odgovor',
   const reply = olgica.getByLabel('Odgovor klijentu')
   await reply.fill('Jedi 150 g piletine.')
   await olgica.getByRole('button', { name: 'Pošalji i označi pregledano' }).click()
-  await expect(olgica.getByRole('alert').filter({ hasText: /Bez grama|grama|kalorij/i })).toBeVisible()
+  await expect(
+    olgica.getByRole('alert').filter({ hasText: /Bez grama|grama|kalorij/i }),
+  ).toBeVisible()
 
   await reply.fill('Ivana, paradajz izbacujemo iz ručka, umesto njega krastavac.')
   await olgica.getByRole('button', { name: 'Pošalji i označi pregledano' }).click()

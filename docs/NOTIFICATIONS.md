@@ -11,6 +11,7 @@ Sve poruke klijentima idu kroz tabelu `notifications` (nikad direktno) sa `dedup
 | +48 h bez odgovora | `scheduler` (status `late`, tim vidi „Kasni“) | — | — |
 | Odgovor tima | `team-reply` | `reply:<reply>:<kanal>` | `ttz_team_reply` |
 | Najava kraja (dan `trajanje − 2`, 09:00) | `scheduler` | `end:<program>:announce:<kanal>` | `ttz_program_ending` |
+| Završni izveštaj objavljen | `publish-report` (samo prvi put) | `report:<program>:<kanal>` | `ttz_report_ready` |
 
 `scheduler` posle dana `trajanje` prebacuje program u `ended`. Pravila su u `supabase/functions/_shared/feedbackRules.ts` (čista funkcija, testirana lažnim vremenom u `src/lib/feedbackRules.test.ts` i `supabase/tests/feedback.test.ts`).
 
@@ -28,7 +29,7 @@ RESEND_API_KEY, EMAIL_FROM                            # Resend
 APP_URL=https://app.<domen>                           # linkovi u porukama
 NOTIFY_DRY_RUN=true                                   # samo lokalno: ništa se ne šalje, poruka se beleži kao poslata
 ```
-WhatsApp template-i se prave unapred u Meta Business Manageru. Parametri: `ttz_plan_ready` {{1}} ime, {{2}} link; `ttz_feedback_due` i `ttz_feedback_reminder` {{1}} ime, {{2}} dan, {{3}} link; `ttz_team_reply` {{1}} ime, {{2}} link; `ttz_program_ending` {{1}} ime, {{2}} preostalo dana, {{3}} link.
+WhatsApp template-i se prave unapred u Meta Business Manageru. Parametri: `ttz_plan_ready` {{1}} ime, {{2}} link; `ttz_feedback_due` i `ttz_feedback_reminder` {{1}} ime, {{2}} dan, {{3}} link; `ttz_team_reply` {{1}} ime, {{2}} link; `ttz_program_ending` {{1}} ime, {{2}} preostalo dana, {{3}} link; `ttz_report_ready` {{1}} ime, {{2}} link (šesti template, napravi ga uz ostalih pet).
 
 ## pg_cron (svakih 15 min)
 Migracija `0006` pravi posao `ttz-scheduler` koji poziva `invoke_scheduler()`. Dok adresa i ključ nisu postavljeni, funkcija ne radi ništa. Po okruženju (ključ nije u kodu ni u gitu):
@@ -42,3 +43,9 @@ Lokalno scheduler možeš da pozoveš ručno (samo sa service role ključem), op
 ## Feedback
 - Forma i šema: `src/lib/feedbackSchema.ts` (deli se sa Edge Functions). Slanje: `submit-feedback` (klijent ne menja `feedbacks` direktno, RLS politika je ukinuta) upisuje `answers`, status `submitted` i merenje za taj dan.
 - Odgovor tima: `team-reply` (samo tim, odbija grame i kalorije), upisuje `feedback_replies`, status `answered`, poruka na izabrane kanale. Rok tima: 48 h (odbrojavanje na pregledu).
+
+## Kraj programa i nastavak (Faza 7)
+- Faze po danu (`programPhase` u `src/lib/programDay.ts`): dani 28–30 „pred kraj“ (otvorena ponuda nastavka), 31–60 samo čitanje (plan i izveštaj), posle toga samo izveštaj i ponuda na `/app/kraj`.
+- Rezultati: SQL funkcija `program_results(program_id)` (razlika mera dan 1 → poslednje merenje, dani praćenja = bar pola obroka štikliranih, treninzi, feedbacki). Isti brojevi su na ekranu klijenta, kod tima i u PDF-u.
+- Izveštaj: tim piše na `/tim/klijenti/:id/izvestaj` (nacrt ili objava). `publish-report` pravi PDF (Outfit, `supabase/functions/_shared/fonts`; pri deploy-u fontovi idu kroz `static_files` u `config.toml`), čuva ga u bucket `reports` (`<client_id>/<program_id>.pdf`) i šalje poruku klijentu. Nacrt klijent ne vidi.
+- Nastavak: `renew-program` pravi novi program (`previous_program_id`, status `awaiting_payment`), uplatu istim tokom kao prvu kupovinu i kopira poslednje važeće obroke (najveći `valid_from_cycle`) i suplemente kao osnovu. Kad admin potvrdi uplatu, prethodni program postaje `renewed`, a novi ide kroz Dan 0 i Dan 1.

@@ -77,7 +77,12 @@ test('Dan 1: mere i podsetnici, aktivacija, Početna i plan ishrane', async ({ p
 
   await expect(page).toHaveURL(/\/app\/danas$/)
   await expect(page.getByText('Zdravo, Jelena!')).toBeVisible()
-  await expect(page.getByText(/Dan 1 od 30/).locator('visible=true').first()).toBeVisible()
+  await expect(
+    page
+      .getByText(/Dan 1 od 30/)
+      .locator('visible=true')
+      .first(),
+  ).toBeVisible()
   await expect(page.getByText(/od 14 · 1\. krug/)).toBeVisible()
 
   // štikliranje obroka ostaje i posle osvežavanja

@@ -22,7 +22,7 @@ import {
   trainingDaysBefore,
   workoutForDay,
 } from '@/lib/planMeals'
-import { isTrainingDay, nextFeedbackDay, PLAN_LENGTH_DAYS } from '@/lib/programDay'
+import { isTrainingDay, nextFeedbackDay, PLAN_LENGTH_DAYS, programPhase } from '@/lib/programDay'
 
 /** Početna (design/Početna.png): današnji obroci, suplementi, trening i tok programa. */
 export default function Home() {
@@ -57,6 +57,7 @@ export default function Home() {
   const feedbackDay = nextFeedbackDay(my.day, my.duration)
   const toFeedback = feedbackDay === null ? null : feedbackDay - my.day
   const name = firstName(my.profile?.full_name)
+  const phase = programPhase(my.day, my.duration)
 
   return (
     <Screen>
@@ -72,6 +73,20 @@ export default function Home() {
       </header>
 
       <div className="mt-6 flex flex-col gap-4">
+        {phase !== 'active' && (
+          <Link
+            to="/app/kraj"
+            className="flex items-center gap-4 rounded-card-lg bg-ink p-5 text-white"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-lg font-extrabold">
+                {my.day >= my.duration ? 'Program je završen' : 'Program se bliži kraju'}
+              </span>
+              <span className="block">Rezultati, izveštaj tima i nastavak</span>
+            </span>
+            <span aria-hidden="true">›</span>
+          </Link>
+        )}
         {openFeedback && (
           <Link
             to={`/app/feedback/${openFeedback.due_day}`}

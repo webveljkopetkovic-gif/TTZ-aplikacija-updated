@@ -29,3 +29,17 @@ export function feedbackSchedule(
   }
   return out
 }
+
+/**
+ * Dan programa na server strani: (danas − activated_at) + 1, 0 pre Dana 1. Isti rezultat kao
+ * src/lib/programDay.ts (to proverava test u src/lib/schedule.test.ts).
+ */
+export function programDayOn(activatedAt: string | null, today: string = belgradeToday()): number {
+  if (!activatedAt) return 0
+  const toDays = (iso: string) => {
+    const [y, m, d] = iso.split('-').map(Number)
+    return Date.UTC(y, m - 1, d) / 86_400_000
+  }
+  const day = toDays(today) - toDays(activatedAt) + 1
+  return day > 0 ? day : 0
+}

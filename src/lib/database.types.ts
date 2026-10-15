@@ -811,6 +811,78 @@ export type Database = {
           },
         ]
       }
+      program_reports: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          id: string
+          nutrition_note: string
+          pdf_path: string | null
+          program_id: string
+          published_at: string | null
+          recommendation: string | null
+          results: Json | null
+          training_note: string
+          updated_at: string
+        }
+        ComputedFields: never
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          nutrition_note?: string
+          pdf_path?: string | null
+          program_id: string
+          published_at?: string | null
+          recommendation?: string | null
+          results?: Json | null
+          training_note?: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          nutrition_note?: string
+          pdf_path?: string | null
+          program_id?: string
+          published_at?: string | null
+          recommendation?: string | null
+          results?: Json | null
+          training_note?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'program_reports_author_id_fkey'
+            columns: ['author_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'program_reports_author_id_fkey'
+            columns: ['author_id']
+            isOneToOne: false
+            referencedRelation: 'team_client_overview'
+            referencedColumns: ['client_id']
+          },
+          {
+            foreignKeyName: 'program_reports_program_id_fkey'
+            columns: ['program_id']
+            isOneToOne: true
+            referencedRelation: 'programs'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'program_reports_program_id_fkey'
+            columns: ['program_id']
+            isOneToOne: true
+            referencedRelation: 'team_client_overview'
+            referencedColumns: ['program_id']
+          },
+        ]
+      }
       programs: {
         Row: {
           activated_at: string | null
@@ -1308,6 +1380,7 @@ export type Database = {
       plan_cycle: { Args: { p_day: number }; Returns: number }
       plan_day: { Args: { p_day: number }; Returns: number }
       program_day: { Args: { p_activated: string; p_on?: string }; Returns: number }
+      program_results: { Args: { p_program_id: string }; Returns: Json }
     }
     Enums: {
       exercise_level: 'beginner' | 'intermediate' | 'advanced'

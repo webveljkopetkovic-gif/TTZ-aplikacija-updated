@@ -81,7 +81,7 @@ export default function TeamLayout() {
   const name = profile.data?.full_name ?? profile.data?.email ?? ''
 
   const items: SidebarItem[] = [
-    { to: '/tim', label: 'Pregled', icon: <GridIcon /> },
+    { to: '/tim', label: 'Pregled', icon: <GridIcon />, end: true },
     { to: '/tim/klijenti', label: 'Dosijei', icon: <FileIcon /> },
     { to: '/tim/feedback', label: 'Feedback', icon: <ClipboardIcon /> },
     { to: '/tim/pitanja', label: 'Pitanja', icon: <QuestionIcon /> },

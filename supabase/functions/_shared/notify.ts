@@ -11,6 +11,7 @@ export type Kind =
   | 'feedback_reminder'
   | 'team_reply'
   | 'program_end'
+  | 'report_ready'
 export type Channel = 'whatsapp' | 'email' | 'app'
 
 export const MAX_ATTEMPTS = 3
@@ -23,6 +24,7 @@ export const TEMPLATE: Record<Kind, string> = {
   feedback_reminder: 'ttz_feedback_reminder',
   team_reply: 'ttz_team_reply',
   program_end: 'ttz_program_ending',
+  report_ready: 'ttz_report_ready',
 }
 
 export type MessageContext = { name: string; appUrl: string }
@@ -80,6 +82,14 @@ export function buildMessage(
         subject: 'Program se bliži kraju',
         text: `${name}, do kraja programa ostaju ${left} dana. Pogledaj tok i rezultate: ${url}`,
         params: [name, left, url],
+      }
+    }
+    case 'report_ready': {
+      const url = link('/app/kraj')
+      return {
+        subject: 'Tvoj završni izveštaj je spreman',
+        text: `${name}, tim je napisao tvoj završni izveštaj. Pogledaj ga i izaberi šta dalje: ${url}`,
+        params: [name, url],
       }
     }
     default:

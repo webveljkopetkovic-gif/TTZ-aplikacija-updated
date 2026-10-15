@@ -45,5 +45,20 @@ export async function markPaid(admin: SupabaseClient, paymentId: string): Promis
     .eq('status', 'awaiting_payment')
   if (programError) throw programError
 
+  // plaćen nastavak: prethodni program je „produžen“ (do tada je aktivan ili završen)
+  const { data: renewed } = await admin
+    .from('programs')
+    .select('previous_program_id')
+    .eq('id', payment.program_id)
+    .maybeSingle()
+  if (renewed?.previous_program_id) {
+    const { error: previousError } = await admin
+      .from('programs')
+      .update({ status: 'renewed' })
+      .eq('id', renewed.previous_program_id)
+      .in('status', ['active', 'ended'])
+    if (previousError) throw previousError
+  }
+
   return { paymentId, programId: payment.program_id, alreadyPaid }
 }

@@ -427,3 +427,7 @@ verify_jwt = false
 # Webhook procesora kartica potpisuje provider, a ne Supabase JWT.
 [functions.payment-webhook]
 verify_jwt = false
+
+# PDF izveštaj ugrađuje Outfit; fontovi moraju da idu uz funkciju pri deploy-u.
+[functions.publish-report]
+static_files = ["./functions/_shared/fonts/*"]

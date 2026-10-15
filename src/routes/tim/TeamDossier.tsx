@@ -343,6 +343,14 @@ export default function TeamDossier() {
             >
               {p.status === 'building_plan' ? 'Napravi plan' : 'Izmeni plan'}
             </Link>
+            {['active', 'ended', 'renewed'].includes(p.status) && (
+              <Link
+                to={`/tim/klijenti/${id}/izvestaj`}
+                className="mt-3 flex min-h-[52px] items-center justify-center rounded-full bg-brand font-extrabold"
+              >
+                Završni izveštaj
+              </Link>
+            )}
           </Section>
 
           <section className="rounded-card-lg border-2 border-dashed border-line p-6">

@@ -123,7 +123,7 @@ serve(async (req, raw) => {
       } else {
         const { data } = await admin
           .from('programs')
-          .update({ status: 'ended' })
+          .update({ status: 'ended', ended_at: now.toISOString() })
           .eq('id', p.id)
           .eq('status', 'active')
           .select('id')
