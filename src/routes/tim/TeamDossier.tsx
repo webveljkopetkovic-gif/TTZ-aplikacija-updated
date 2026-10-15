@@ -7,11 +7,13 @@ import {
   useClientFeedbacks,
   useClientLabFiles,
   useClientMeasurements,
+  useClientPastPrograms,
   useClientProfile,
   useClientProgram,
   useSupplements,
   useTeamNotes,
 } from '@/api/team'
+import { useProgramResults } from '@/api/end'
 import { ErrorNote, Loading, OwnerTag, Page, Row, Section, StatusPill } from '@/components/team/ui'
 import { Avatar, Button } from '@/components/ui'
 import { cn } from '@/lib/cn'
@@ -23,6 +25,7 @@ import {
   type IntakeRow,
 } from '@/lib/dossierView'
 import { EXERCISE_LEVEL_LABEL, type ExerciseLevel } from '@/lib/labels'
+import { change, formatChange } from '@/lib/programResults'
 import { belgradeDate, programDay } from '@/lib/programDay'
 
 const fmtDate = (iso: string) =>
@@ -50,8 +53,33 @@ function Delta({ label, value }: { label: string; value: string }) {
   )
 }
 
-const signed = (n: number, unit: string) =>
-  `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(Math.round(n * 10) / 10).toLocaleString('sr-Latn-RS')} ${unit}`
+function PastProgram({
+  id,
+  name,
+  status,
+  activatedAt,
+}: {
+  id: string
+  name?: string
+  status: string
+  activatedAt: string | null
+}) {
+  const results = useProgramResults(id)
+  const r = results.data
+  return (
+    <li className="rounded-2xl bg-bg p-4">
+      <p className="font-extrabold">
+        {name ?? 'Program'} · {activatedAt ? fmtDate(activatedAt) : '—'}
+      </p>
+      <p className="text-sm text-muted">
+        {status === 'renewed' ? 'nastavljen' : status === 'ended' ? 'završen' : status}
+        {r
+          ? ` · težina ${formatChange(change(r.start_weight_kg, r.end_weight_kg), 'kg')}, struk ${formatChange(change(r.start_waist_cm, r.end_waist_cm), 'cm')}, plan praćen ${r.followed_days}/${r.duration_days} d`
+          : ''}
+      </p>
+    </li>
+  )
+}
 
 /** Zdravstveni dosije (design/Zdravstveni dosije (ceo).png). Beleške tima vidi samo tim. */
 export default function TeamDossier() {
@@ -63,6 +91,8 @@ export default function TeamDossier() {
   const programId = program.data?.id
   const labs = useClientLabFiles(id)
   const measurements = useClientMeasurements(programId)
+  const results = useProgramResults(programId)
+  const past = useClientPastPrograms(id, programId)
   const feedbacks = useClientFeedbacks(programId)
   const supplements = useSupplements(programId)
   const notes = useTeamNotes(id)
@@ -208,33 +238,40 @@ export default function TeamDossier() {
             </Section>
           )}
 
-          <Section title="Rezultati">
-            {hasDelta && first && last ? (
-              <div className="grid grid-cols-3 gap-3">
+          <Section
+            title="Rezultati"
+            right={<span className="text-sm text-muted">isti brojevi kao kod klijenta</span>}
+          >
+            {results.data && hasDelta ? (
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <Delta
                   label="Težina"
-                  value={
-                    first.weight_kg != null && last.weight_kg != null
-                      ? signed(Number(last.weight_kg) - Number(first.weight_kg), 'kg')
-                      : '—'
-                  }
+                  value={formatChange(
+                    change(results.data.start_weight_kg, results.data.end_weight_kg),
+                    'kg',
+                  )}
                 />
                 <Delta
                   label="Struk"
-                  value={
-                    first.waist_cm != null && last.waist_cm != null
-                      ? signed(Number(last.waist_cm) - Number(first.waist_cm), 'cm')
-                      : '—'
-                  }
+                  value={formatChange(
+                    change(results.data.start_waist_cm, results.data.end_waist_cm),
+                    'cm',
+                  )}
                 />
                 <Delta
                   label="Energija ujutru"
                   value={
-                    first.energy_am != null && last.energy_am != null
+                    first?.energy_am != null && last?.energy_am != null
                       ? `${first.energy_am} → ${last.energy_am}`
                       : '—'
                   }
                 />
+                <Delta
+                  label="Plan praćen"
+                  value={`${results.data.followed_days}/${results.data.duration_days} d`}
+                />
+                {withTraining && <Delta label="Treninga" value={`${results.data.workouts_done}`} />}
+                <Delta label="Feedbacka" value={`${results.data.feedbacks_done}`} />
               </div>
             ) : (
               <p className="text-muted">
@@ -253,6 +290,22 @@ export default function TeamDossier() {
               </ul>
             )}
           </Section>
+
+          {(past.data?.length ?? 0) > 0 && (
+            <Section title="Raniji programi">
+              <ul className="flex flex-col gap-3">
+                {past.data!.map((g) => (
+                  <PastProgram
+                    key={g.id}
+                    id={g.id}
+                    name={g.products?.name}
+                    status={g.status}
+                    activatedAt={g.activated_at}
+                  />
+                ))}
+              </ul>
+            </Section>
+          )}
 
           <Section
             title="Feedback hronologija"

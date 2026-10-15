@@ -96,6 +96,28 @@ export async function openLabFile(path: string): Promise<void> {
   window.open(data.signedUrl, '_blank', 'noopener')
 }
 
+/** Raniji programi klijenta (karton): sve osim najnovijeg. */
+export function useClientPastPrograms(
+  clientId: string | undefined,
+  currentProgramId: string | undefined,
+) {
+  return useQuery({
+    queryKey: ['client-past-programs', clientId, currentProgramId],
+    enabled: !!clientId && !!currentProgramId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('programs')
+        .select('id, status, activated_at, duration_days, products ( name )')
+        .eq('client_id', clientId!)
+        .neq('id', currentProgramId!)
+        .not('activated_at', 'is', null)
+        .order('activated_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+  })
+}
+
 export function useClientMeasurements(programId: string | undefined) {
   return useQuery({
     queryKey: ['client-measurements', programId],
