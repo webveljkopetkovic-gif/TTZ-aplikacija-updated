@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { useSession } from '@/api/auth'
 import { useCurrentProgram } from '@/api/programs'
 import ClientLayout from '@/components/client/ClientLayout'
-import { ComingSoon } from '@/components/client/ui'
 import { homeForStatus } from '@/lib/programHome'
 import DayOne from './DayOne'
 import DayZero from './DayZero'
@@ -14,6 +13,7 @@ import Journey from './Journey'
 import Meals from './Meals'
 import PaymentPending from './PaymentPending'
 import Progress from './Progress'
+import Questions from './Questions'
 import Supplements from './Supplements'
 import Team from './Team'
 import { WorkoutPlayer, Workouts } from './Workouts'
@@ -60,7 +60,7 @@ export default function ClientRoutes() {
         <Route path="tim" element={<Team />} />
         <Route path="feedback" element={<Feedback />} />
         <Route path="feedback/:day" element={<FeedbackForm />} />
-        <Route path="pitanja" element={<ComingSoon title="Pitanja" phase={6} />} />
+        <Route path="pitanja" element={<Questions />} />
       </Route>
       <Route path="*" element={<Navigate to="/app" replace />} />
     </Routes>

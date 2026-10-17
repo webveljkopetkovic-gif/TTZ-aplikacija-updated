@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useMealLogs, useProgramMeals } from '@/api/client'
 import { ErrorNote, Loading, Panel, Screen, ScreenHeader } from '@/components/client/ui'
 import { useMyProgram } from '@/hooks/useMyProgram'
@@ -11,9 +11,13 @@ import { PLAN_LENGTH_DAYS } from '@/lib/programDay'
 export default function Meals() {
   const my = useMyProgram()
   const meals = useProgramMeals(my.program?.id)
+  const [params] = useSearchParams()
   const [picked, setPicked] = useState<number>()
   const [recipeFor, setRecipeFor] = useState<string>()
-  const selected = picked ?? my.planDay
+  // ?dan=N dolazi iz Pitanja („Otvori plan za dan N“)
+  const linked = Number(params.get('dan'))
+  const selected =
+    picked ?? (Number.isInteger(linked) && linked >= 1 && linked <= PLAN_LENGTH_DAYS ? linked : my.planDay)
   const isToday = selected === my.planDay
   const logs = useMealLogs(my.program?.id, my.day)
 

@@ -29,6 +29,12 @@ Admin potvrđuje na `/tim/uplate` („Uplata primljena“). Poziv webhook-a je i
 - `VAPID_*` secrets moraju biti postavljeni, a `VITE_VAPID_PUBLIC_KEY` isti javni ključ. Promena para ruši postojeće pretplate: klijenti ponovo uključuju obaveštenja.
 - Mrtvi uređaji (404/410) se brišu sami.
 
+## AI asistent ne odgovara ili odgovara loše
+- Klijent tada dobija šablon „prosledio sam timu“, a poruka se pojavi na `/tim/pitanja` kao eskalacija. Odgovori iz konzole.
+- Supabase → Edge Functions → `assistant` → Logs (`AI asistent …`): pogrešan ključ (401), istekao kredit, model ne postoji.
+- Trošak i ishodi: `select model, outcome, count(*), sum(input_tokens), sum(output_tokens) from ai_usage where created_at > now() - interval '7 days' group by 1, 2;` (`fallback` / `error` = model ne poštuje pravila ili nije dostupan).
+- Promena modela ili provajdera: `npx supabase secrets set AI_BASE_URL=... AI_API_KEY=... AI_MODEL=...`, pa `npm run test:ai` sa istim vrednostima.
+
 ## Backup i povratak
 - Supabase → Database → Backups: dnevni backup; povratak kroz „Restore“ (PITR ako je uključen).
 - Ručna kopija: `npx supabase db dump --linked -f backup.sql` (sadrži zdravstvene podatke: čuvaj šifrovano, nikad u git).

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Qwen Plus",
+    "baseUrl": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "apiKeyEnv": "QWEN_API_KEY",
+    "model": "qwen-plus",
+    "priceInPerM": null,
+    "priceOutPerM": null
+  },
+  {
+    "name": "Mistral Small",
+    "baseUrl": "https://api.mistral.ai/v1",
+    "apiKeyEnv": "MISTRAL_API_KEY",
+    "model": "mistral-small-latest",
+    "priceInPerM": null,
+    "priceOutPerM": null
+  },
+  {
+    "name": "Gemini Flash",
+    "baseUrl": "https://generativelanguage.googleapis.com/v1beta/openai",
+    "apiKeyEnv": "GEMINI_API_KEY",
+    "model": "gemini-2.5-flash",
+    "priceInPerM": null,
+    "priceOutPerM": null
+  }
+]

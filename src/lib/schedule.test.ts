@@ -39,3 +39,13 @@ describe('programDayOn (server) je isto što i programDay (klijent)', () => {
     expect(programDayOn(null, '2026-10-05')).toBe(0)
   })
 })
+
+describe('planDayOn (server) je isto što i planDay / planCycle (klijent)', () => {
+  it('isti dan plana i krug za dane 0–45', async () => {
+    const { planCycle, planDay } = await import('./programDay')
+    const { planDayOn } = await import('./schedule')
+    for (let day = 0; day <= 45; day++) {
+      expect(planDayOn(day)).toEqual({ planDay: planDay(day), cycle: planCycle(day) })
+    }
+  })
+})

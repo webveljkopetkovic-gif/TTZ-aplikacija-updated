@@ -129,11 +129,3 @@ export function ErrorNote({ children }: { children: ReactNode }) {
     </p>
   )
 }
-
-export function ComingSoon({ title, phase }: { title: string; phase: number }) {
-  return (
-    <Screen>
-      <ScreenHeader title={title} subtitle={`Ovaj ekran stiže u Fazi ${phase}.`} />
-    </Screen>
-  )
-}
