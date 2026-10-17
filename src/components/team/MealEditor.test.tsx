@@ -10,6 +10,7 @@ const item = (plan_day: number, slot: MealItem['slot'], title: string): MealItem
   title,
   description: null,
   recipe: null,
+  ingredients: null,
 })
 
 const items: MealItem[] = [
@@ -59,6 +60,7 @@ describe('MealEditor', () => {
       title: 'Pileće belo sa brokolijem',
       description: '',
       recipe: '',
+      ingredients: '',
     })
   })
 

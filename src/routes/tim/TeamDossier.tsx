@@ -81,7 +81,7 @@ function PastProgram({
   )
 }
 
-/** Zdravstveni dosije (design/Zdravstveni dosije (ceo).png). Beleške tima vidi samo tim. */
+/** Karton klijenta (design/Zdravstveni dosije (ceo).png). Beleške tima vidi samo tim. */
 export default function TeamDossier() {
   const { id } = useParams()
   const session = useSession()
@@ -131,7 +131,7 @@ export default function TeamDossier() {
   return (
     <Page>
       <Link to="/tim/klijenti" className="inline-flex min-h-btn items-center font-bold text-muted">
-        ← ZDRAVSTVENI DOSIJE
+        ← KARTON KLIJENTA
       </Link>
 
       <header className="mt-2 flex items-center gap-4">

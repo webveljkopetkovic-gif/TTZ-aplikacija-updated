@@ -203,7 +203,7 @@ export function useProgramMeals(programId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('program_meals')
-        .select('id, plan_day, slot, time_of_day, title, description, recipe, valid_from_cycle')
+        .select('id, plan_day, slot, time_of_day, title, description, recipe, ingredients, valid_from_cycle')
         .eq('program_id', programId!)
         .eq('valid_from_cycle', 1)
         .order('plan_day')
@@ -242,6 +242,7 @@ export function useSaveMeal(programId: string | undefined, authorId: string | un
       title: string
       description: string
       recipe: string
+      ingredients: string
     }) => {
       const { error } = await supabase.from('program_meals').upsert(
         {
@@ -251,6 +252,7 @@ export function useSaveMeal(programId: string | undefined, authorId: string | un
           ...meal,
           description: meal.description || null,
           recipe: meal.recipe || null,
+          ingredients: meal.ingredients || null,
         },
         { onConflict: 'program_id,plan_day,slot,valid_from_cycle' },
       )
@@ -386,7 +388,7 @@ export function useTemplateItems(templateId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('meal_template_items')
-        .select('id, plan_day, slot, time_of_day, title, description, recipe')
+        .select('id, plan_day, slot, time_of_day, title, description, recipe, ingredients')
         .eq('template_id', templateId!)
         .order('plan_day')
         .order('time_of_day')
@@ -422,6 +424,7 @@ export function useSaveTemplateItem(templateId: string | undefined) {
       title: string
       description: string
       recipe: string
+      ingredients: string
     }) => {
       const { error } = await supabase.from('meal_template_items').upsert(
         {
@@ -429,6 +432,7 @@ export function useSaveTemplateItem(templateId: string | undefined) {
           ...item,
           description: item.description || null,
           recipe: item.recipe || null,
+          ingredients: item.ingredients || null,
         },
         { onConflict: 'template_id,plan_day,slot' },
       )

@@ -40,6 +40,7 @@ vi.mock('@/api/feedback', () => ({
 import Home from './Home'
 import Journey from './Journey'
 import Meals from './Meals'
+import Shopping from './Shopping'
 
 const meal = (
   plan_day: number,
@@ -192,6 +193,29 @@ describe('Plan ishrane', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Dan 6' }))
     expect(screen.getByText('Pileće belo')).toBeInTheDocument()
     expect(screen.queryByText('Jaja i avokado')).not.toBeInTheDocument()
+  })
+})
+
+describe('Nabavka namirnica', () => {
+  it('prikazuje namirnice po danima i štiklira kupljeno', async () => {
+    state.my = myProgram(1, 1, 1)
+    state.meals = [
+      { ...meal(1, 'breakfast', 'Jaja', '08:00:00'), ingredients: 'jaja\navokado' },
+      { ...meal(2, 'lunch', 'Riba', '14:00:00'), ingredients: 'oslić\nlimun' },
+    ]
+    renderAt(<Shopping />)
+    expect(screen.getByRole('heading', { name: /Dan 1/ })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Dan 2' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Dan 3' })).toBeInTheDocument()
+    expect(screen.getByLabelText('oslić')).not.toBeChecked()
+    await userEvent.click(screen.getByLabelText('jaja'))
+    expect(screen.getByLabelText('jaja')).toBeChecked()
+  })
+
+  it('bez namirnica u planu objašnjava da ih tim još nije upisao', () => {
+    state.my = myProgram(1, 1, 1)
+    renderAt(<Shopping />)
+    expect(screen.getByText(/tim još nije upisao namirnice/)).toBeInTheDocument()
   })
 })
 

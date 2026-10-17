@@ -11,7 +11,7 @@ import Login from '@/routes/Login'
 import ClientRoutes from '@/routes/client/ClientRoutes'
 import Landing from '@/routes/Landing'
 import PlanChoice from '@/routes/PlanChoice'
-import { PartnerHome } from '@/routes/Placeholders'
+import Partner from '@/routes/partner/Partner'
 import TeamRoutes from '@/routes/tim/TeamRoutes'
 import ResetPassword from '@/routes/ResetPassword'
 
@@ -52,7 +52,7 @@ function AppRoutes() {
           path="/partner/*"
           element={
             <RequireRole allow={['partner', 'admin']}>
-              <PartnerHome />
+              <Partner />
             </RequireRole>
           }
         />

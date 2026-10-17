@@ -29,7 +29,7 @@ Ovaj dokument je glavna specifikacija. `CLAUDE.md` je kratak sažetak pravila ko
 - Klijent: početna za danas, plan ishrane 14 dana, suplementi, vežbe po nivou, tok programa, napredak
 - Feedback na 10 dana sa podsetnicima (WhatsApp + email) i odgovorom tima porukom
 - Pitanja: AI asistent odgovara odmah, tim potvrđuje izmene
-- Tim (Olgica, Ognjen): pregled, dosijei, zdravstveni dosije, feedback za pregled, izrada plana iz šablona, materijali
+- Tim (Olgica, Ognjen): pregled, klijenti, karton klijenta, feedback za pregled, izrada plana iz šablona, materijali
 - Dan 30: završni feedback, izveštaj, nastavak (novi program) ili kraj
 - Partner panel (Veljko): samo prihodi i 30% udeo
 
@@ -214,6 +214,7 @@ Ime ekrana = ime na canvasu. Slike u `design/`.
 | `/app/dan-1` | Dan 1 · prvi koraci | `ready` (prvi ulaz) |
 | `/app/danas` | Početna | `active` |
 | `/app/ishrana` | Plan ishrane 14 dana | dan selektor 1–14, recept, zamena |
+| `/app/nabavka` | Plan nabavke namirnica | Danas / 3 / 7 dana, po danima ili jedan spisak, štikliranje; namirnice iz obroka (`ingredients`, bez grama) |
 | `/app/suplementi` | Suplementi i nalazi | |
 | `/app/vezbe`, `/app/vezbe/:id` | Vežbe, vežba u toku, vežbe završene | samo za `nutrition_training` |
 | `/app/tok` | Tok programa · dan 1 do 30 | kalendar + vremenska linija |
@@ -227,8 +228,8 @@ Ime ekrana = ime na canvasu. Slike u `design/`.
 | Ruta | Ekran |
 |---|---|
 | `/tim` | Tim – pregled (prekidač Olgica / Ognjen / ceo tim) |
-| `/tim/klijenti` | Dosijei klijenata (filteri: svi, feedback stigao, kasni, nov plan) |
-| `/tim/klijenti/:id` | Zdravstveni dosije |
+| `/tim/klijenti` | Klijenti (filteri: svi, feedback stigao, kasni, nov plan) |
+| `/tim/klijenti/:id` | Karton klijenta |
 | `/tim/klijenti/:id/plan` | Tim – plan za klijenta (šablon, izmene obroka, suplementi, nivo vežbi, „Pošalji plan“) |
 | `/tim/feedback/:id` | Pregled feedbacka i odgovor |
 | `/tim/pitanja` | Poruke koje čekaju potvrdu |

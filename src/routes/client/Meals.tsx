@@ -30,12 +30,20 @@ export default function Meals() {
         title="Plan ishrane"
         subtitle={`Dan ${selected} od ${PLAN_LENGTH_DAYS} · ${my.cycle}. krug · od Olgice`}
         right={
-          <Link
-            to="/app/suplementi"
-            className="flex min-h-btn items-center rounded-full bg-card px-5 font-extrabold"
-          >
-            Suplementi
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              to="/app/nabavka"
+              className="flex min-h-btn items-center rounded-full bg-brand px-5 font-extrabold"
+            >
+              Nabavka
+            </Link>
+            <Link
+              to="/app/suplementi"
+              className="flex min-h-btn items-center rounded-full bg-card px-5 font-extrabold"
+            >
+              Suplementi
+            </Link>
+          </div>
         }
       />
 

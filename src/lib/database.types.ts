@@ -372,6 +372,7 @@ export type Database = {
         Row: {
           description: string | null
           id: string
+          ingredients: string | null
           photo_path: string | null
           plan_day: number
           recipe: string | null
@@ -384,6 +385,7 @@ export type Database = {
         Insert: {
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day: number
           recipe?: string | null
@@ -395,6 +397,7 @@ export type Database = {
         Update: {
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day?: number
           recipe?: string | null
@@ -797,6 +800,7 @@ export type Database = {
           created_by: string | null
           description: string | null
           id: string
+          ingredients: string | null
           photo_path: string | null
           plan_day: number
           program_id: string
@@ -812,6 +816,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day: number
           program_id: string
@@ -826,6 +831,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day?: number
           program_id?: string

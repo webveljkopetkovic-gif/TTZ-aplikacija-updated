@@ -189,7 +189,7 @@ function Form({
         to={`/tim/klijenti/${clientId}`}
         className="min-h-btn font-bold text-brand-text underline"
       >
-        ← Nazad na dosije
+        ← Nazad na karton klijenta
       </Link>
     </form>
   )
@@ -230,7 +230,7 @@ export default function TeamReport() {
         to={`/tim/klijenti/${id}`}
         className="inline-flex min-h-btn items-center font-bold text-muted"
       >
-        ← DOSIJE
+        ← KARTON
       </Link>
       <h1 className="mt-1 text-4xl font-extrabold leading-tight">
         Završni izveštaj · {profile.data?.full_name ?? 'klijent'}

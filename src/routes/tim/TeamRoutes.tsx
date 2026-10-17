@@ -12,7 +12,7 @@ import TeamQuestions from './TeamQuestions'
 import TeamReport from './TeamReport'
 import { RequireRole } from '@/components/RequireRole'
 
-/** Konzola tima (/tim/*): Pregled, Dosijei, Zdravstveni dosije, Plan za klijenta, Feedback, Pitanja, Obaveštenja, Materijali. */
+/** Konzola tima (/tim/*): Pregled, Klijenti, Karton klijenta, Plan za klijenta, Feedback, Pitanja, Obaveštenja, Materijali. */
 export default function TeamRoutes() {
   return (
     <Routes>

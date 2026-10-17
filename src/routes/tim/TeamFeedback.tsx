@@ -396,7 +396,7 @@ export default function TeamFeedback() {
                   to={`/tim/klijenti/${selected.programs.client_id}`}
                   className="inline-flex min-h-btn items-center rounded-full bg-card px-5 font-extrabold"
                 >
-                  Otvori dosije
+                  Otvori karton klijenta
                 </Link>
               </header>
 

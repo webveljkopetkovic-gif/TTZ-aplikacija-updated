@@ -14,6 +14,7 @@ import Meals from './Meals'
 import PaymentPending from './PaymentPending'
 import Progress from './Progress'
 import Questions from './Questions'
+import Shopping from './Shopping'
 import Supplements from './Supplements'
 import Team from './Team'
 import { WorkoutPlayer, Workouts } from './Workouts'
@@ -52,6 +53,7 @@ export default function ClientRoutes() {
       <Route element={<ClientLayout />}>
         <Route path="danas" element={<Home />} />
         <Route path="ishrana" element={<Meals />} />
+        <Route path="nabavka" element={<Shopping />} />
         <Route path="suplementi" element={<Supplements />} />
         <Route path="vezbe" element={<Workouts />} />
         <Route path="vezbe/:id" element={<WorkoutPlayer />} />
