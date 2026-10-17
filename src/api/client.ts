@@ -16,7 +16,7 @@ export function useProgramMeals(programId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('program_meals')
-        .select('plan_day, slot, time_of_day, title, description, recipe, valid_from_cycle')
+        .select('plan_day, slot, time_of_day, title, description, recipe, ingredients, valid_from_cycle')
         .eq('program_id', programId!)
       if (error) throw error
       return (data ?? []).map((m) => ({ ...m, slot: m.slot as Slot }))

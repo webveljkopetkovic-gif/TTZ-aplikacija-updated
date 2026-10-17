@@ -10,3 +10,4 @@ playwright-report
 *.tsbuildinfo
 
 supabase/functions/.env
+scripts/ai-eval/models.local.json

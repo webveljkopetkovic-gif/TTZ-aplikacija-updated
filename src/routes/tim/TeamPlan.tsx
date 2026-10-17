@@ -138,7 +138,7 @@ export default function TeamPlan() {
         to={`/tim/klijenti/${id}`}
         className="inline-flex min-h-btn items-center font-bold text-muted"
       >
-        ← DOSIJE
+        ← KARTON
       </Link>
       <h1 className="mt-1 text-3xl font-extrabold leading-tight">{profile.data.full_name}</h1>
       <p className="text-muted">
@@ -159,7 +159,7 @@ export default function TeamPlan() {
           title="Iz ankete"
           right={
             <Link to={`/tim/klijenti/${id}`} className="font-bold text-brand-text underline">
-              Ceo dosije
+              Ceo karton
             </Link>
           }
         >

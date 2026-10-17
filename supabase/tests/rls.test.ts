@@ -20,6 +20,7 @@ const HEALTH_TABLES = [
   'feedbacks',
   'feedback_replies',
   'messages',
+  'ai_usage',
   'team_notes',
   'notifications',
   'reminder_settings',

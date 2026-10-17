@@ -33,7 +33,7 @@ function useContacts() {
 
 const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim()
 
-/** Dosijei klijenata (design/Dosijei klijenata.png): pretraga i filteri. */
+/** Klijenti (design/Dosijei klijenata.png): pretraga i filteri. */
 export default function TeamClients() {
   const [params, setParams] = useSearchParams()
   const initial = params.get('filter')
@@ -73,8 +73,8 @@ export default function TeamClients() {
 
   return (
     <Page>
-      <h1 className="text-4xl font-extrabold">Dosijei</h1>
-      <p className="mt-1 text-muted">{rows.length} klijenata · klikni za ceo dosije</p>
+      <h1 className="text-4xl font-extrabold">Klijenti</h1>
+      <p className="mt-1 text-muted">{rows.length} klijenata · klikni za karton klijenta</p>
 
       <div className="mt-5">
         <label htmlFor="client-search" className="sr-only">
@@ -108,7 +108,7 @@ export default function TeamClients() {
       </div>
 
       {overview.isPending && <Loading />}
-      {overview.isError && <ErrorNote>Dosijei se nisu učitali. Osveži stranicu.</ErrorNote>}
+      {overview.isError && <ErrorNote>Klijenti se nisu učitali. Osveži stranicu.</ErrorNote>}
 
       <ul className="mt-5 rounded-card-lg bg-card px-5">
         {visible.map((r) => (

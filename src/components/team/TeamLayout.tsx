@@ -29,7 +29,7 @@ interface TabItem {
 
 const left: TabItem[] = [
   { to: '/tim', label: 'Pregled', icon: <GridIcon />, end: true },
-  { to: '/tim/klijenti', label: 'Dosijei', icon: <FileIcon /> },
+  { to: '/tim/klijenti', label: 'Klijenti', icon: <FileIcon /> },
 ]
 const right: TabItem[] = [
   { to: '/tim/feedback', label: 'Feedback', icon: <ClipboardIcon /> },
@@ -82,7 +82,7 @@ export default function TeamLayout() {
 
   const items: SidebarItem[] = [
     { to: '/tim', label: 'Pregled', icon: <GridIcon />, end: true },
-    { to: '/tim/klijenti', label: 'Dosijei', icon: <FileIcon /> },
+    { to: '/tim/klijenti', label: 'Klijenti', icon: <FileIcon /> },
     { to: '/tim/feedback', label: 'Feedback', icon: <ClipboardIcon /> },
     { to: '/tim/pitanja', label: 'Pitanja', icon: <QuestionIcon /> },
     { to: '/tim/obavestenja', label: 'Obaveštenja', icon: <FileIcon /> },

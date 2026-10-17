@@ -3,6 +3,9 @@ import {
   calendarDays,
   mealsForDay,
   nextMealSlot,
+  parseIngredients,
+  shoppingByDay,
+  shoppingList,
   trainingDaysBefore,
   workoutForDay,
   type PlanMeal,
@@ -111,5 +114,53 @@ describe('datum dana programa i video po redu', () => {
     expect(workoutForDay(videos, 1, 0)).toBe('a')
     expect(workoutForDay(videos, 4, 2)).toBe('a')
     expect(workoutForDay([], 1, 0)).toBeNull()
+  })
+})
+
+describe('nabavka namirnica', () => {
+  const withIngredients = (
+    plan_day: number,
+    slot: PlanMeal['slot'],
+    ingredients: string | null,
+    valid_from_cycle = 1,
+  ): PlanMeal => ({ ...meal(plan_day, slot, 'Obrok', valid_from_cycle), ingredients })
+
+  it('parseIngredients izbacuje oznake liste i prazne redove', () => {
+    expect(parseIngredients('- jaja\n\n• avokado\n2) spanać; limun')).toEqual([
+      'jaja',
+      'avokado',
+      'spanać',
+      'limun',
+    ])
+    expect(parseIngredients(null)).toEqual([])
+  })
+
+  it('shoppingByDay spaja obroke dana bez duplikata', () => {
+    const plan = [
+      withIngredients(1, 'breakfast', 'jaja\navokado'),
+      withIngredients(1, 'lunch', 'Jaja\nbrokoli'),
+    ]
+    const [d1] = shoppingByDay(plan, 1, 1)
+    expect(d1.items).toEqual(['jaja', 'avokado', 'brokoli'])
+  })
+
+  it('dan 15 koristi plan dana 1 u krugu 2', () => {
+    const plan = [
+      withIngredients(1, 'breakfast', 'jaja'),
+      withIngredients(1, 'breakfast', 'ovsene pahuljice', 2),
+    ]
+    const [d1, d15] = [shoppingByDay(plan, 1, 1)[0], shoppingByDay(plan, 15, 15)[0]]
+    expect(d1.items).toEqual(['jaja'])
+    expect(d15.planDay).toBe(1)
+    expect(d15.items).toEqual(['ovsene pahuljice'])
+  })
+
+  it('shoppingList pamti u kojim danima treba namirnica', () => {
+    const plan = [withIngredients(1, 'lunch', 'riža\nlimun'), withIngredients(2, 'lunch', 'Riža')]
+    const list = shoppingList(shoppingByDay(plan, 1, 3))
+    expect(list).toEqual([
+      { name: 'limun', days: [1] },
+      { name: 'riža', days: [1, 2] },
+    ])
   })
 })

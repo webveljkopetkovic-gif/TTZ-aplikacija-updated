@@ -43,3 +43,9 @@ export function programDayOn(activatedAt: string | null, today: string = belgrad
   const day = toDays(today) - toDays(activatedAt) + 1
   return day > 0 ? day : 0
 }
+
+/** Dan u 14-dnevnom planu ishrane i krug (isto kao planDay / planCycle u src/lib/programDay.ts). */
+export function planDayOn(day: number): { planDay: number; cycle: number } {
+  if (day < 1) return { planDay: 0, cycle: 0 }
+  return { planDay: ((day - 1) % 14) + 1, cycle: Math.floor((day - 1) / 14) + 1 }
+}

@@ -22,8 +22,9 @@ export function mealViolation(meal: {
   title?: string | null
   description?: string | null
   recipe?: string | null
-}): { field: 'title' | 'description' | 'recipe'; message: string } | null {
-  for (const field of ['title', 'description', 'recipe'] as const) {
+  ingredients?: string | null
+}): { field: 'title' | 'description' | 'recipe' | 'ingredients'; message: string } | null {
+  for (const field of ['title', 'description', 'recipe', 'ingredients'] as const) {
     const message = findMealRuleViolation(meal[field])
     if (message) return { field, message }
   }

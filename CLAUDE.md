@@ -6,13 +6,14 @@ Web app (PWA) za health coaching: klijent popuni anketu, kupi plan, tim (Olgica 
 - React 18 + Vite + TypeScript (strict), React Router, TanStack Query, React Hook Form + Zod
 - Tailwind CSS (tokeni ispod), vite-plugin-pwa (instalira se na telefon)
 - Supabase: Postgres + RLS, Auth (email + lozinka, magic link), Storage, Edge Functions (Deno), pg_cron
-- Email: Resend. WhatsApp: Meta WhatsApp Cloud API (template poruke). AI: Anthropic Claude API iz Edge Function
+- Email: Resend. WhatsApp: Meta WhatsApp Cloud API (template poruke). AI: LLM preko OpenAI-kompatibilnog API-ja iz Edge Function (provajder i model samo u secrets: `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`)
 - Testovi: Vitest + Testing Library, Playwright za glavne tokove
 
 ## Komande (Windows PowerShell)
 - `npm run dev` · `npm run build` · `npm run test` · `npm run lint` · `npx playwright test`
 - `npx supabase start` · `npx supabase db reset` · `npx supabase functions serve`
 - `npm run test:rls` (testovi baze, RLS-a i Edge Functions: traže `supabase start`, seed i pokrenut `npx supabase functions serve`; lokalni nalozi `*@ttz.test`, lozinka `Ttz-dev-2026!`)
+- `npm run test:ai` (15 test pitanja za AI asistenta na pravom modelu; ključ u `.env.local` ili `scripts/ai-eval/models.local.json`; pre svakog deploya)
 - `npx playwright test` (e2e u instaliranom Chrome-u; traži iste servise, dev server pokreće sam)
 - `npx supabase gen types typescript --local > src/lib/database.types.ts`
 

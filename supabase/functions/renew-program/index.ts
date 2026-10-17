@@ -116,7 +116,7 @@ serve(async (req, raw) => {
     // osnova za novi plan: za svaki dan i obrok važi poslednja verzija (najveći valid_from_cycle)
     const { data: meals } = await admin
       .from('program_meals')
-      .select('plan_day, slot, time_of_day, title, description, recipe, photo_path, valid_from_cycle')
+      .select('plan_day, slot, time_of_day, title, description, recipe, ingredients, photo_path, valid_from_cycle')
       .eq('program_id', previous.id)
     const latest = new Map<string, NonNullable<typeof meals>[number]>()
     for (const meal of meals ?? []) {
@@ -137,6 +137,7 @@ serve(async (req, raw) => {
             title: meal.title,
             description: meal.description,
             recipe: meal.recipe,
+            ingredients: meal.ingredients,
             photo_path: meal.photo_path,
             valid_from_cycle: 1,
           })),

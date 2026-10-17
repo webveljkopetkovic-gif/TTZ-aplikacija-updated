@@ -23,9 +23,10 @@ npx supabase secrets set \
   APP_URL=https://app.<domen> \
   WHATSAPP_TOKEN=... WHATSAPP_PHONE_ID=... WHATSAPP_LANG=sr \
   RESEND_API_KEY=... EMAIL_FROM="TTZ <tim@<domen>>" \
-  VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=... VAPID_SUBJECT=mailto:tim@<domen>
+  VAPID_PUBLIC_KEY=... VAPID_PRIVATE_KEY=... VAPID_SUBJECT=mailto:tim@<domen>   AI_BASE_URL=... AI_API_KEY=... AI_MODEL=... AI_DAILY_LIMIT=30
 ```
-Nikad `NOTIFY_DRY_RUN` u produkciji. VAPID par: `npx web-push generate-vapid-keys` (javni ključ ide i u Vercel kao `VITE_VAPID_PUBLIC_KEY`; privatni samo u Supabase).
+Nikad `NOTIFY_DRY_RUN` ni `AI_DRY_RUN` u produkciji.
+AI: model je bilo koji OpenAI-kompatibilan API (npr. Qwen: `AI_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1`). Pre deploya `npm run test:ai` mora da prođe svih 15 pitanja sa istim modelom. VAPID par: `npx web-push generate-vapid-keys` (javni ključ ide i u Vercel kao `VITE_VAPID_PUBLIC_KEY`; privatni samo u Supabase).
 WhatsApp: u Meta Business Manageru odobri 6 šablona (`ttz_plan_ready`, `ttz_feedback_due`, `ttz_feedback_reminder`, `ttz_team_reply`, `ttz_program_ending`, `ttz_report_ready`), parametri su u `docs/NOTIFICATIONS.md`.
 Email: u Resend-u verifikuj domen (SPF, DKIM, DMARC) pre prve poruke.
 

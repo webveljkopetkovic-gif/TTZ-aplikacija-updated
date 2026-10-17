@@ -29,7 +29,7 @@ Ovaj dokument je glavna specifikacija. `CLAUDE.md` je kratak sažetak pravila ko
 - Klijent: početna za danas, plan ishrane 14 dana, suplementi, vežbe po nivou, tok programa, napredak
 - Feedback na 10 dana sa podsetnicima (WhatsApp + email) i odgovorom tima porukom
 - Pitanja: AI asistent odgovara odmah, tim potvrđuje izmene
-- Tim (Olgica, Ognjen): pregled, dosijei, zdravstveni dosije, feedback za pregled, izrada plana iz šablona, materijali
+- Tim (Olgica, Ognjen): pregled, klijenti, karton klijenta, feedback za pregled, izrada plana iz šablona, materijali
 - Dan 30: završni feedback, izveštaj, nastavak (novi program) ili kraj
 - Partner panel (Veljko): samo prihodi i 30% udeo
 
@@ -72,10 +72,10 @@ Ulogu dodeljuje samo admin (trigger u bazi). Tim se ne registruje kroz javnu for
   │    activate-program   klijent otvara plan → activated_at = danas (Dan 1)
   │    scheduler          na 15 min: feedback, podsetnici, rok za plan (dan 5 / 7), kraj programa
   │    send-notification  WhatsApp / email / app, sa retry i dedupe
-  │    assistant          AI asistent (Claude API)
+  │    assistant          AI asistent (OpenAI-kompatibilan LLM)
   │    team-reply         odgovor tima na feedback → WhatsApp + email
   └─ pg_cron + pg_net → poziva scheduler
-[Resend] email · [Meta WhatsApp Cloud API] WhatsApp · [Anthropic API] AI
+[Resend] email · [Meta WhatsApp Cloud API] WhatsApp · [LLM provajder, npr. Qwen] AI
 [Hosting frontenda] Vercel ili Netlify, subdomen preko CNAME
 ```
 
@@ -146,7 +146,8 @@ Iste formule postoje u SQL-u (`program_day`, `plan_day`, `plan_cycle`). Unit tes
 - Email ide uvek kao rezerva ako WhatsApp ne uspe.
 
 ### 4.6 AI asistent
-- Edge Function `assistant`, model iz env `ANTHROPIC_MODEL` (npr. `claude-sonnet-5-5`, ili `claude-haiku-4-5-20251001` za niži trošak).
+- Edge Function `assistant`, model preko OpenAI-kompatibilnog API-ja: `AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL` u secrets (npr. Qwen preko Alibaba Model Studio, Mistral, Gemini). Promena modela = promena secrets-a, bez novog koda. Model se bira po `npm run test:ai` (15 pitanja) i ceni.
+- Zaštitni sloj na serveru (`_shared/assistantRules.ts`, `_shared/assistantLoop.ts`), nezavisan od modela: odgovor sa brojem kalorija, gramima, vaganjem ili ćirilicom → jedan ponovni pokušaj, pa bezbedan šablon i eskalacija; ozbiljan simptom u pitanju → uvek savet za lekara i hitna eskalacija.
 - Kontekst koji dobija: samo polja iz `docs/ANKETA.md` sekcija 7 (ime, pol, starost, fokus plana, alergije, hrana koju ne voli, tečnost, stolica, san, nivo vežbi), današnji dan / plan dan / krug, obroci za danas i sutra, suplementi, nivo vežbi, poslednji odgovor tima. **Nikad** `team_notes`.
 - Alati (tool use):
   - `propose_meal_swap(plan_day, slot, new_title, reason)` → `needs_team_review = true`
@@ -213,6 +214,7 @@ Ime ekrana = ime na canvasu. Slike u `design/`.
 | `/app/dan-1` | Dan 1 · prvi koraci | `ready` (prvi ulaz) |
 | `/app/danas` | Početna | `active` |
 | `/app/ishrana` | Plan ishrane 14 dana | dan selektor 1–14, recept, zamena |
+| `/app/nabavka` | Plan nabavke namirnica | Danas / 3 / 7 dana, po danima ili jedan spisak, štikliranje; namirnice iz obroka (`ingredients`, bez grama) |
 | `/app/suplementi` | Suplementi i nalazi | |
 | `/app/vezbe`, `/app/vezbe/:id` | Vežbe, vežba u toku, vežbe završene | samo za `nutrition_training` |
 | `/app/tok` | Tok programa · dan 1 do 30 | kalendar + vremenska linija |
@@ -226,8 +228,8 @@ Ime ekrana = ime na canvasu. Slike u `design/`.
 | Ruta | Ekran |
 |---|---|
 | `/tim` | Tim – pregled (prekidač Olgica / Ognjen / ceo tim) |
-| `/tim/klijenti` | Dosijei klijenata (filteri: svi, feedback stigao, kasni, nov plan) |
-| `/tim/klijenti/:id` | Zdravstveni dosije |
+| `/tim/klijenti` | Klijenti (filteri: svi, feedback stigao, kasni, nov plan) |
+| `/tim/klijenti/:id` | Karton klijenta |
 | `/tim/klijenti/:id/plan` | Tim – plan za klijenta (šablon, izmene obroka, suplementi, nivo vežbi, „Pošalji plan“) |
 | `/tim/feedback/:id` | Pregled feedbacka i odgovor |
 | `/tim/pitanja` | Poruke koje čekaju potvrdu |
@@ -258,7 +260,7 @@ Mobilni raspored ima donju navigaciju (TabBar), web ima levi sidebar. Isti podac
 - Tajna: `RESEND_API_KEY`.
 
 ### 7.4 AI
-- Anthropic API iz Edge Function, ključ samo u Supabase secrets (`ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`).
+- LLM iz Edge Function, ključ samo u Supabase secrets (`AI_BASE_URL`, `AI_API_KEY`, `AI_MODEL`). Pre izbora provajdera proveriti DPA, region obrade i da ne trenira na podacima (zdravstveni podaci).
 - Nikad ne zovi API iz browsera.
 
 ### 7.5 Video vežbi
@@ -369,7 +371,7 @@ Napravi stranicu /tim/obavestenja sa logom poslatih i neuspelih poruka.
 
 ### Faza 6 · AI asistent
 ```
-Napravi Edge Function assistant po PLAN.md 4.6 (Anthropic API, model iz ANTHROPIC_MODEL, tool use:
+Napravi Edge Function assistant po PLAN.md 4.6 (OpenAI-kompatibilan API, model iz AI_MODEL, tool use:
 propose_meal_swap, propose_workout_swap, escalate_to_team). Kontekst gradi server iz baze, nikad team_notes.
 System prompt na srpskom sa svim pravilima (bez kalorija i grama, bez dijagnoza, crveni simptomi → lekar + eskalacija).
 Ekran Pitanja po design/: poruke, brza dugmad (Zamena obroka, Suplementi, Vežba ne prija), oznake

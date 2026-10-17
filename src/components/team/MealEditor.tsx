@@ -12,6 +12,7 @@ export interface MealItem {
   title: string
   description: string | null
   recipe: string | null
+  ingredients: string | null
 }
 
 export interface MealDraft {
@@ -21,6 +22,7 @@ export interface MealDraft {
   title: string
   description: string
   recipe: string
+  ingredients: string
 }
 
 const hhmm = (t: string) => t.slice(0, 5)
@@ -44,21 +46,23 @@ function SlotEditor({
   const [title, setTitle] = useState(item?.title ?? '')
   const [description, setDescription] = useState(item?.description ?? '')
   const [recipe, setRecipe] = useState(item?.recipe ?? '')
+  const [ingredients, setIngredients] = useState(item?.ingredients ?? '')
   const [time, setTime] = useState(hhmm(item?.time_of_day ?? slot.time))
   const [error, setError] = useState<string>()
   const [saving, setSaving] = useState(false)
 
-  const flagged = matchDisliked({ title, description, recipe }, words)
+  const flagged = matchDisliked({ title, description, recipe: `${recipe} ${ingredients}` }, words)
   const dirty =
     title !== (item?.title ?? '') ||
     description !== (item?.description ?? '') ||
     recipe !== (item?.recipe ?? '') ||
+    ingredients !== (item?.ingredients ?? '') ||
     time !== hhmm(item?.time_of_day ?? slot.time)
   const fieldId = `meal-${day}-${slot.value}`
 
   const save = async () => {
     if (title.trim() === '') return setError('Upiši naziv obroka')
-    const violation = mealViolation({ title, description, recipe })
+    const violation = mealViolation({ title, description, recipe, ingredients })
     if (violation) return setError(`${violation.message}. Opiši obrok bez brojeva i mera.`)
     setError(undefined)
     setSaving(true)
@@ -70,6 +74,7 @@ function SlotEditor({
         title: title.trim(),
         description: description.trim(),
         recipe: recipe.trim(),
+        ingredients: ingredients.trim(),
       })
     } catch {
       setError('Obrok nije sačuvan. Pokušaj ponovo.')
@@ -103,9 +108,9 @@ function SlotEditor({
         aria-invalid={error ? true : undefined}
         className={cn(field, 'mt-3 min-h-[48px]')}
       />
-      <details className="mt-2" open={!!(description || recipe)}>
+      <details className="mt-2" open={!!(description || recipe || ingredients)}>
         <summary className="min-h-btn cursor-pointer py-2 text-sm font-bold text-brand-text">
-          Opis i recept
+          Opis, recept i namirnice
         </summary>
         <textarea
           aria-label={`Opis: ${slot.label}`}
@@ -121,6 +126,14 @@ function SlotEditor({
           value={recipe}
           onChange={(e) => setRecipe(e.target.value)}
           placeholder="Recept (bez grama, kalorija i vaganja)"
+          className={cn(field, 'mt-2 resize-none')}
+        />
+        <textarea
+          aria-label={`Namirnice: ${slot.label}`}
+          rows={3}
+          value={ingredients}
+          onChange={(e) => setIngredients(e.target.value)}
+          placeholder="Namirnice za nabavku, jedna po redu (bez grama)"
           className={cn(field, 'mt-2 resize-none')}
         />
       </details>

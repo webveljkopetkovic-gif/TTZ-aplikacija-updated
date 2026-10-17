@@ -23,6 +23,61 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage: {
+        Row: {
+          calls: number
+          client_id: string
+          created_at: string
+          id: string
+          input_tokens: number
+          latency_ms: number | null
+          message_id: string | null
+          model: string
+          outcome: string
+          output_tokens: number
+        }
+        ComputedFields: never
+        Insert: {
+          calls?: number
+          client_id: string
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          latency_ms?: number | null
+          message_id?: string | null
+          model: string
+          outcome: string
+          output_tokens?: number
+        }
+        Update: {
+          calls?: number
+          client_id?: string
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          latency_ms?: number | null
+          message_id?: string | null
+          model?: string
+          outcome?: string
+          output_tokens?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'ai_usage_client_id_fkey'
+            columns: ['client_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'ai_usage_message_id_fkey'
+            columns: ['message_id']
+            isOneToOne: false
+            referencedRelation: 'messages'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       app_settings: {
         Row: {
           key: string
@@ -317,6 +372,7 @@ export type Database = {
         Row: {
           description: string | null
           id: string
+          ingredients: string | null
           photo_path: string | null
           plan_day: number
           recipe: string | null
@@ -329,6 +385,7 @@ export type Database = {
         Insert: {
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day: number
           recipe?: string | null
@@ -340,6 +397,7 @@ export type Database = {
         Update: {
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day?: number
           recipe?: string | null
@@ -742,6 +800,7 @@ export type Database = {
           created_by: string | null
           description: string | null
           id: string
+          ingredients: string | null
           photo_path: string | null
           plan_day: number
           program_id: string
@@ -757,6 +816,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day: number
           program_id: string
@@ -771,6 +831,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           id?: string
+          ingredients?: string | null
           photo_path?: string | null
           plan_day?: number
           program_id?: string
@@ -1402,6 +1463,7 @@ export type Database = {
         Args: { p_key: string; p_max: number; p_window_seconds: number }
         Returns: boolean
       }
+      client_messages_today: { Args: { p_client_id: string }; Returns: number }
       get_partner_revenue: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1427,6 +1489,10 @@ export type Database = {
       plan_day: { Args: { p_day: number }; Returns: number }
       program_day: { Args: { p_activated: string; p_on?: string }; Returns: number }
       program_results: { Args: { p_program_id: string }; Returns: Json }
+      review_assistant_proposal: {
+        Args: { p_message_id: string; p_note?: string; p_result: string; p_title?: string }
+        Returns: Json
+      }
     }
     Enums: {
       exercise_level: 'beginner' | 'intermediate' | 'advanced'
